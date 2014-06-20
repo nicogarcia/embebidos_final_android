@@ -49,16 +49,19 @@
                 </div>
             </div>
             <% if(isConnected) { %>
-                <div class='row'>
-                    <div class='col-xs-8'>
-                        <input class="send-text" />
-                    </div>
-                    <div class='col-xs-4'>
-                        <button type='button' class='btn btn-info btn-block btn-bt-send'>
-                            <span class='glyphicon glyphicon-check'></span> Send
-                        </button>
-                    </div>
+            <div class='row'>
+                <div class='col-xs-8'>
+                    <input class="send-text" />
                 </div>
+                <div class='col-xs-4'>
+                    <button type='button' class='btn btn-info btn-block btn-bt-send'>
+                        <span class='glyphicon glyphicon-check'></span> Send
+                    </button>
+                </div>
+            </div>
+            <button type='button' class='btn btn-info btn-block btn-bt-login'>
+                <span class='glyphicon glyphicon-arrow-right'></span> Login
+            </button>
             <% } %>
         </div>
     </div>
@@ -96,6 +99,15 @@
     <div id="logger"></div>
 </script>
 
+<!-- The connection page template -->
+<script type="text/template" id="login-template">
+    <input class="username" />
+    <input class="password" type="password" />
+    <button type="button" class="btn btn-success btn-lg btn-block btn-login">
+        Login
+    </button>
+</script>
+
 <!-- Our precious libraries -->
 <script src="bower_components/jquery/dist/jquery.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
@@ -108,6 +120,9 @@
 
 <!-- Basically our whole app -->
 <script src="js/main.js"></script>
+<script src="js/model/communication.js"></script>
+<script src="js/model/user.js"></script>
+<script src="js/view/user.js"></script>
 <script src="js/model/bt-manager.js"></script>
 <script src="js/view/connection.js"></script>
 <script src="js/model/logger.js"></script>

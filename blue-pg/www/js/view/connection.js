@@ -4,7 +4,8 @@ App.View.DeviceView = Backbone.View.extend({
     events: {
         'click .btn-bt-connect':    'connect',
         'click .btn-bt-disconnect': 'disconnect',
-        'click .btn-bt-send': 'send'
+        'click .btn-bt-send': 'send',
+        'click .btn-bt-login': 'gotologin'
     },
 
     initialize: function() {
@@ -23,6 +24,20 @@ App.View.DeviceView = Backbone.View.extend({
         var self = this;
 
         $('.btn-bt-connect').button('loading');
+
+        // If it was connected, disconnect
+        var isConnected = function(connected){
+            if(connected) {
+                Logger.log("There's an opened connection.");
+                window.bluetooth.disconnect(function () {
+                }, function (error) {
+                    Logger.log(error.message);
+                });
+            }
+        };
+        window.bluetooth.isConnected(isConnected, function(error){
+            Logger.log(error.message);
+        });
 
         var onFail = function (error) {
             Logger.log("Connection failed! :( "+  error.message);
@@ -53,8 +68,6 @@ App.View.DeviceView = Backbone.View.extend({
                     onReadData, onConnectionLost);
             }
 
-            self.disconnect();
-
             window.bluetooth.connect(onConnection, onFail, {
                 uuid: device.uuids[0],
                 address: self.model.get('address')
@@ -70,6 +83,12 @@ App.View.DeviceView = Backbone.View.extend({
 
     send: function(){
         BTManager.send($(".send-text").val());
+    },
+
+    gotologin: function(){
+        UserView = new App.View.UserView();
+        $('#page-container').empty().append(UserView.$el);
+        UserView.render();
     }
 });
 

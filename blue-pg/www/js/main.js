@@ -24,9 +24,13 @@ var Logger;
 var LoggerView;
 var BluetoothState;
 var User;
+var UserView;
+var Communication;
 
 var onDeviceReady = function() {
     console.log("Device Ready!");
+
+    Communication = new App.Model.Communication();
 
     // Create state and BTManager
     BluetoothState = new App.Model.BluetoothState({
