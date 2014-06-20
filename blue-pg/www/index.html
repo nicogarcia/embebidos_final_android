@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+
+    <!-- Make the app behave more like a native app -->
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width, height=device-height" />
+
+    <!-- Bootstrap styles -->
+    <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen" />
+
+    <title>SISAD</title>
+</head>
+<body>
+
+<!-- Every application needs a topbar, right? -->
+<nav class="navbar navbar-default" role="navigation">
+    <div class="navbar-header">
+        <a href="#" class="navbar-brand">SISAD</a>
+    </div>
+</nav>
+
+<!-- Actual content of the application hosted here -->
+<div class="container">
+    <div id="page-container"></div>
+</div>
+
+<!-- The logger template -->
+<script type="text/template" id="logger-template">
+    <p><%= data %></p>
+</script>
+
+<!-- The device list item template -->
+<script type="text/template" id="item-template">
+    <div class='panel panel-default' style='margin-top:16px;'>
+        <div class='panel-body'>
+            <div class='row'>
+                <div class='col-xs-8'><b><%= name %></b></div>
+                <div class='col-xs-4'>
+                    <% if(isConnected) { %>
+                    <button type='button' class='btn btn-danger btn-block btn-bt btn-bt-disconnect'>
+                        <span class='glyphicon glyphicon-remove'></span> Disconnect
+                    </button>
+                    <% } else { %>
+                    <button type='button' class='btn btn-default btn-block btn-bt btn-bt-connect' data-loading-text='Connecting...' disabled>
+                        <span class='glyphicon glyphicon-transfer'></span> Connect
+                    </button>
+                    <% } %>
+                </div>
+            </div>
+            <% if(isConnected) { %>
+                <div class='row'>
+                    <div class='col-xs-8'>
+                        <input class="send-text" />
+                    </div>
+                    <div class='col-xs-4'>
+                        <button type='button' class='btn btn-info btn-block btn-bt-send'>
+                            <span class='glyphicon glyphicon-check'></span> Send
+                        </button>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</script>
+
+<!-- The connection page template -->
+<script type="text/template" id="connection-template">
+    <!-- On and Off buttons -->
+    <div class="row">
+        <div class="col-xs-6">
+            <button id="btn-bt-on" type="button" class="btn btn-success btn-lg btn-block btn-bt" disabled>
+                On
+            </button>
+        </div>
+        <div class="col-xs-6">
+            <button id="btn-bt-off" type="button" class="btn btn-danger btn-lg btn-block btn-bt" disabled>
+                Off
+            </button>
+        </div>
+    </div>
+
+    <!-- Discovery button -->
+    <div class="row" style="margin-top:16px;">
+        <div class="col-md-12">
+            <button id="btn-bt-discover" type="button" class="btn btn-info btn-lg btn-block btn-bt" data-loading-text="Discovering..." disabled>
+                <span class="glyphicon glyphicon-eye-open"></span> Start Discovery
+            </button>
+        </div>
+    </div>
+
+    <!-- The found devices appear inside this div -->
+    <div id="list-devices"></div>
+
+    <!-- The view for the logger -->
+    <div id="logger"></div>
+</script>
+
+<!-- Our precious libraries -->
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="bower_components/underscore/underscore.js"></script>
+<script src="bower_components/backbone/backbone.js"></script>
+<script src="bower_components/layoutmanager/backbone.layoutmanager.js"></script>
+
+<script src="cordova.js"></script>
+<script src="bluetooth.js"></script>
+
+<!-- Basically our whole app -->
+<script src="js/main.js"></script>
+<script src="js/model/bt-manager.js"></script>
+<script src="js/view/connection.js"></script>
+<script src="js/model/logger.js"></script>
+<script src="js/view/logger.js"></script>
+
+</body>
+</html>
