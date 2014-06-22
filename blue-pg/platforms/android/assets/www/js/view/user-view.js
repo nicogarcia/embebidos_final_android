@@ -2,7 +2,7 @@ App.View.UserView = Backbone.View.extend({
     template: '#login-template',
 
     events: {
-        'click .btn-login':    'login'
+        'click .btn-login':    'startLogin'
     },
 
     login: function(){
@@ -11,6 +11,6 @@ App.View.UserView = Backbone.View.extend({
             username: $('.username').val(),
             password: $('.password').val()
         });
-        Communication.login(this.model);
+        Communication.startLogin(this.model);
     }
 });

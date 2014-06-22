@@ -10,7 +10,6 @@ App.View.DeviceView = Backbone.View.extend({
 
     initialize: function() {
         this.model.on('change', this.render, this);
-        this.disconnect();
     },
 
     serialize: function(){
@@ -35,38 +34,21 @@ App.View.DeviceView = Backbone.View.extend({
                 });
             }
         };
-        window.bluetooth.isConnected(isConnected, function(error){
-            Logger.log(error.message);
-        });
 
         var onFail = function (error) {
-            Logger.log("Connection failed! :( "+  error.message);
+            Logger.log("Connection failed! :( " + error.message);
             BluetoothState.set({
                 state: App.Model.BluetoothState.Ready
             });
             self.$('.btn-bt-connect').button('reset');
-        }
+        };
 
         var gotUuids = function (device) {
             var onConnection = function () {
                 self.model.set({
                     isConnected: true
                 });
-
-                var onConnectionLost = function () {
-                    self.model.set({
-                        isConnected: false
-                    });
-                    onFail();
-                };
-                var onReadData = function(data){
-                    console.log(JSON.stringify(data));
-                    Logger.logbyte(data);
-                };
-
-                window.bluetooth.startConnectionManager(
-                    onReadData, onConnectionLost);
-            }
+            };
 
             window.bluetooth.connect(onConnection, onFail, {
                 uuid: device.uuids[0],
@@ -78,6 +60,7 @@ App.View.DeviceView = Backbone.View.extend({
     },
 
     disconnect: function(){
+        // TODO: This is left for debug purposes, it should be removed
         BTManager.disconnect(function(){});
     },
 
@@ -87,6 +70,7 @@ App.View.DeviceView = Backbone.View.extend({
 
     gotologin: function(){
         UserView = new App.View.UserView();
+        UserView.setView('.logger', LoggerView);
         $('#page-container').empty().append(UserView.$el);
         UserView.render();
     }
@@ -136,7 +120,7 @@ App.View.ConnectionView = Backbone.View.extend({
                 DeviceCollection.add(new App.Model.Device(device));
                 console.log("Device discovered: " + device.name);
                 // TODO: Move behaviour to BTManager
-                window.bluetooth.stopDiscovery(function(){}, function(error){});
+                window.bluetooth.stopDiscovery(function(){}, onBTError);
                 onDiscoveryFinished();
             };
 
@@ -144,7 +128,7 @@ App.View.ConnectionView = Backbone.View.extend({
 
             DeviceCollection.reset();
 
-            BTManager.discover(onDeviceDiscovered, onDiscoveryFinished, onDiscoveryFinished);
+            BTManager.discover(onDeviceDiscovered, onDiscoveryFinished, onBTError);
         };
         $('#btn-bt-discover').on('click', onDiscover);
 

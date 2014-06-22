@@ -96,16 +96,31 @@
     <div id="list-devices"></div>
 
     <!-- The view for the logger -->
-    <div id="logger"></div>
+    <div class="logger"></div>
+
 </script>
 
-<!-- The connection page template -->
+<!-- The login page template -->
 <script type="text/template" id="login-template">
     <input class="username" />
     <input class="password" type="password" />
     <button type="button" class="btn btn-success btn-lg btn-block btn-login">
         Login
     </button>
+
+    <!-- The view for the logger -->
+    <div class="logger"></div>
+</script>
+
+<!-- The control page template -->
+<script type="text/template" id="control-template">
+
+    <h2>User: <%= user.username %></h2>
+    <h3>Connected: <%= user.connected %></h3>
+    <h3>Temperature: <%= temperature %></h3>
+
+    <!-- The view for the logger -->
+    <div class="logger"></div>
 </script>
 
 <!-- Our precious libraries -->
@@ -120,13 +135,15 @@
 
 <!-- Basically our whole app -->
 <script src="js/main.js"></script>
+<script src="js/model/control-model.js"></script>
+<script src="js/view/control-view.js"></script>
 <script src="js/model/communication.js"></script>
-<script src="js/model/user.js"></script>
-<script src="js/view/user.js"></script>
+<script src="js/model/user-model.js"></script>
+<script src="js/view/user-view.js"></script>
 <script src="js/model/bt-manager.js"></script>
-<script src="js/view/connection.js"></script>
-<script src="js/model/logger.js"></script>
-<script src="js/view/logger.js"></script>
+<script src="js/view/connection-view.js"></script>
+<script src="js/model/logger-model.js"></script>
+<script src="js/view/logger-view.js"></script>
 
 </body>
 </html>
