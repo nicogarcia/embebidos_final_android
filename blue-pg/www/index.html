@@ -102,9 +102,15 @@
 
 <!-- The login page template -->
 <script type="text/template" id="login-template">
-    <input class="username" />
-    <input class="password" type="password" />
-    <button type="button" class="btn btn-success btn-lg btn-block btn-login">
+    <div class="form-group">
+        <label>User</label>
+        <input type="password" class="form-control username"  value="test_user" placeholder="User">
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-control password"  value="test_pass" placeholder="Password">
+    </div>
+    <button type="button" class="btn btn-success btn-block btn-login">
         Login
     </button>
 

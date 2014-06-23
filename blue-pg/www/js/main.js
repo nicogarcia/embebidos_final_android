@@ -40,6 +40,8 @@ var onDeviceReady = function() {
         }, onBTError
     );
 
+    window.bluetooth.iscon
+
     Communication = new App.Model.Communication();
 
     // Create state and BTManager
@@ -62,7 +64,7 @@ var onDeviceReady = function() {
     ConnectionView.setView(".logger", LoggerView);
 
     // Append connection to the container and render
-    ConnectionView.$el.appendTo('#page-container');
+    $('#page-container').empty().append(ConnectionView.$el);
     ConnectionView.render();
 
     // Set jquery states and event bindings
