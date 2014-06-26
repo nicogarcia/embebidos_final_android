@@ -32,15 +32,16 @@ var onBTError = function(error){
         Logger.log(error.message);
 };
 
+
+var gotologin = function(){
+    UserView = new App.View.UserView();
+    UserView.setView('.logger', LoggerView);
+    $('#page-container').empty().append(UserView.$el);
+    UserView.render();
+};
+
 var onDeviceReady = function() {
     console.log("Device Ready!");
-
-    window.bluetooth.disconnect(function(){
-            console.log("Disconnected");
-        }, onBTError
-    );
-
-    window.bluetooth.iscon
 
     Communication = new App.Model.Communication();
 

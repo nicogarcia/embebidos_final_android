@@ -34,9 +34,6 @@ App.View.DeviceView = Backbone.View.extend({
                 });
             }
         };
-        window.bluetooth.isConnected(isConnected, function(error){
-            Logger.log(error.message);
-        });
 
         var onFail = function (error) {
             Logger.log("Connection failed! :( " + error.message);
@@ -123,7 +120,7 @@ App.View.ConnectionView = Backbone.View.extend({
                 DeviceCollection.add(new App.Model.Device(device));
                 console.log("Device discovered: " + device.name);
                 // TODO: Move behaviour to BTManager
-                window.bluetooth.stopDiscovery(function(){}, function(error){});
+                window.bluetooth.stopDiscovery(function(){}, onBTError);
                 onDiscoveryFinished();
             };
 
@@ -131,7 +128,7 @@ App.View.ConnectionView = Backbone.View.extend({
 
             DeviceCollection.reset();
 
-            BTManager.discover(onDeviceDiscovered, onDiscoveryFinished, onDiscoveryFinished);
+            BTManager.discover(onDeviceDiscovered, onDiscoveryFinished, onBTError);
         };
         $('#btn-bt-discover').on('click', onDiscover);
 

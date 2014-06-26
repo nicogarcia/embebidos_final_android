@@ -8,6 +8,7 @@
 
     <!-- Bootstrap styles -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen" />
+    <link href="css/sisad.css" rel="stylesheet" media="screen" />
 
     <title>SISAD</title>
 </head>
@@ -28,43 +29,6 @@
 <!-- The logger template -->
 <script type="text/template" id="logger-template">
     <p><%= data %></p>
-</script>
-
-<!-- The device list item template -->
-<script type="text/template" id="item-template">
-    <div class='panel panel-default' style='margin-top:16px;'>
-        <div class='panel-body'>
-            <div class='row'>
-                <div class='col-xs-8'><b><%= name %></b></div>
-                <div class='col-xs-4'>
-                    <% if(isConnected) { %>
-                    <button type='button' class='btn btn-danger btn-block btn-bt btn-bt-disconnect'>
-                        <span class='glyphicon glyphicon-remove'></span> Disconnect
-                    </button>
-                    <% } else { %>
-                    <button type='button' class='btn btn-default btn-block btn-bt btn-bt-connect' data-loading-text='Connecting...' disabled>
-                        <span class='glyphicon glyphicon-transfer'></span> Connect
-                    </button>
-                    <% } %>
-                </div>
-            </div>
-            <% if(isConnected) { %>
-            <div class='row'>
-                <div class='col-xs-8'>
-                    <input class="send-text" />
-                </div>
-                <div class='col-xs-4'>
-                    <button type='button' class='btn btn-info btn-block btn-bt-send'>
-                        <span class='glyphicon glyphicon-check'></span> Send
-                    </button>
-                </div>
-            </div>
-            <button type='button' class='btn btn-info btn-block btn-bt-login'>
-                <span class='glyphicon glyphicon-arrow-right'></span> Login
-            </button>
-            <% } %>
-        </div>
-    </div>
 </script>
 
 <!-- The connection page template -->
@@ -100,15 +64,52 @@
 
 </script>
 
+<!-- The device list item template -->
+<script type="text/template" id="item-template">
+    <div class='panel panel-default' style='margin-top:16px;'>
+        <div class='panel-body'>
+            <div class='row'>
+                <div class='col-xs-6'><b><%= name %></b></div>
+                <div class='col-xs-6'>
+                    <% if(isConnected) { %>
+                    <button type='button' class='btn btn-danger btn-block btn-bt btn-bt-disconnect'>
+                        <span class='glyphicon glyphicon-remove'></span> Disconnect
+                    </button>
+                    <% } else { %>
+                    <button type='button' class='btn btn-default btn-block btn-bt btn-bt-connect' data-loading-text='Connecting...' disabled>
+                        <span class='glyphicon glyphicon-transfer'></span> Connect
+                    </button>
+                    <% } %>
+                </div>
+            </div>
+            <% if(isConnected) { %>
+            <div class='row'>
+                <div class='col-xs-8'>
+                    <input class="send-text" />
+                </div>
+                <div class='col-xs-4'>
+                    <button type='button' class='btn btn-info btn-block btn-bt-send'>
+                        <span class='glyphicon glyphicon-check'></span> Send
+                    </button>
+                </div>
+            </div>
+            <button type='button' class='btn btn-info btn-block btn-bt-login'>
+                <span class='glyphicon glyphicon-arrow-right'></span> Login
+            </button>
+            <% } %>
+        </div>
+    </div>
+</script>
+
 <!-- The login page template -->
 <script type="text/template" id="login-template">
     <div class="form-group">
         <label>User</label>
-        <input type="password" class="form-control username"  value="test_user" placeholder="User">
+        <input type="text" class="form-control username"  value="admin" placeholder="User">
     </div>
     <div class="form-group">
         <label>Password</label>
-        <input type="password" class="form-control password"  value="test_pass" placeholder="Password">
+        <input type="password" class="form-control password"  value="12345" placeholder="Password">
     </div>
     <button type="button" class="btn btn-success btn-block btn-login">
         Login
@@ -120,10 +121,29 @@
 
 <!-- The control page template -->
 <script type="text/template" id="control-template">
-
-    <h2>User: <%= user.username %></h2>
-    <h3>Connected: <%= user.connected %></h3>
-    <h3>Temperature: <%= temperature %></h3>
+    <h4>
+        User: <%= user.username %>
+        <% if(user.connected){ %>
+        (Online)
+        <% } else { %>
+        (Offline)
+        <% } %>
+    </h4>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="panel panel-default panel-body">
+                <h4>Temperature<br><%= temperature %></h4>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="panel panel-default panel-body">
+                <h4>Humidity<br><%= humidity %></h4>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-info btn-lg btn-block btn-refresh-state">
+        <span class="glyphicon glyphicon-refresh"></span> Refresh
+    </button>
 
     <!-- The view for the logger -->
     <div class="logger"></div>

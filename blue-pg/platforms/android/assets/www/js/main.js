@@ -20,15 +20,25 @@ var BTManager;
 var DeviceCollection;
 var DeviceListView;
 var ConnectionView;
-var Logger;
-var LoggerView;
+var Logger, LoggerView;
 var BluetoothState;
-var User;
-var UserView;
+var User, UserView;
 var Communication;
+var ControlState, ControlView;
+
+var onBTError = function(error){
+    console.log(error.message);
+    if(Logger != undefined)
+        Logger.log(error.message);
+};
 
 var onDeviceReady = function() {
     console.log("Device Ready!");
+
+    window.bluetooth.disconnect(function(){
+            console.log("Disconnected");
+        }, onBTError
+    );
 
     Communication = new App.Model.Communication();
 
@@ -52,29 +62,19 @@ var onDeviceReady = function() {
     ConnectionView.setView(".logger", LoggerView);
 
     // Append connection to the container and render
-    ConnectionView.$el.appendTo('#page-container');
+    $('#page-container').empty().append(ConnectionView.$el);
     ConnectionView.render();
 
     // Set jquery states and event bindings
     ConnectionView.init();
 
-    // Log start message
-    Logger.log("Started!");
 };
 
 $(document).on('deviceready', onDeviceReady);
 
-var onBTError = function(error){
-    console.log(error.message);
-};
 
 // Include bluetooth plugin and initialize window.bluetooth object
 window.bluetooth = cordova.require("cordova/plugin/bluetooth");
-
-window.bluetooth.disconnect(function(){
-    console.log("Disconnected");
-}, onBTError
-);
 
 // Print start message.
 console.log("*******************************************************************;");

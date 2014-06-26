@@ -102,9 +102,15 @@
 
 <!-- The login page template -->
 <script type="text/template" id="login-template">
-    <input class="username" />
-    <input class="password" type="password" />
-    <button type="button" class="btn btn-success btn-lg btn-block btn-login">
+    <div class="form-group">
+        <label>User</label>
+        <input type="password" class="form-control username"  value="test_user" placeholder="User">
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-control password"  value="test_pass" placeholder="Password">
+    </div>
+    <button type="button" class="btn btn-success btn-block btn-login">
         Login
     </button>
 
@@ -135,6 +141,8 @@
 
 <!-- Basically our whole app -->
 <script src="js/main.js"></script>
+<script src="js/model/control-model.js"></script>
+<script src="js/view/control-view.js"></script>
 <script src="js/model/communication.js"></script>
 <script src="js/model/user-model.js"></script>
 <script src="js/view/user-view.js"></script>

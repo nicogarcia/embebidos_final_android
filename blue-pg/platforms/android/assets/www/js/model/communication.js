@@ -24,8 +24,6 @@ App.Model.Communication = Backbone.Model.extend({
             this.onError();
         };
 
-        var loginResult = false;
-
         var onReadData = function(data){
             console.log(data);
             Logger.log(data);
@@ -34,7 +32,7 @@ App.Model.Communication = Backbone.Model.extend({
                 window.bluetooth.stopConnectionManager();
                 var parameter = data.slice(1, data.indexOf('#'));
                 Logger.log(parameter);
-                loginResult = parameter == SUCCESS;
+                UserView.onLogin(parameter == SUCCESS);
             }
         };
 
@@ -42,9 +40,5 @@ App.Model.Communication = Backbone.Model.extend({
             onReadData, onConnectionLost);
 
         BTManager.send(message);
-
-        window.bluetooth.stopConnectionManager();
-
-        return loginResult;
     }
 });

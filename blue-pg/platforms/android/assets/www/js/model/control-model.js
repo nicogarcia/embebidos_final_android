@@ -1,6 +1,6 @@
 App.Model.ControlState = Backbone.Model.extend({
     defaults: {
-        user: '',
-        temperature: ''
+        user: {},
+        temperature: '10°'
     }
 });

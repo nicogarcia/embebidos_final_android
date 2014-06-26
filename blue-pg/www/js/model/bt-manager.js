@@ -1,3 +1,5 @@
+var BTDeviceName = 'H-C-2010-06-01';
+
 App.Model.BluetoothState = Backbone.Model.extend({}, {
     Off:       1,
     Busy:      2,
@@ -14,6 +16,8 @@ App.Model.Device = Backbone.Model.extend({
 });
 
 App.Model.BTManager = Backbone.Model.extend({
+
+    waiting: false,
 
     initialize: function(){
         window.bluetooth.isEnabled(function(isEnabled) {
@@ -89,6 +93,19 @@ App.Model.BTManager = Backbone.Model.extend({
             onFinish, onErrorWithState);
     },
 
+    connect: function(onConnected, device){
+        var self = this;
+        var onConnectedProxy = function(){
+            window.bluetooth.startConnectionManager(Communication.onDataRead, onBTError);
+            onConnected();
+        };
+
+        window.bluetooth.connect(onConnectedProxy, onBTError, {
+            address: device.address,
+            uuid: device.uuids[0]
+        });
+    },
+
     disconnect: function(onDisconnected) {
         BluetoothState.set({
             state: App.Model.BluetoothState.Busy
@@ -104,8 +121,22 @@ App.Model.BTManager = Backbone.Model.extend({
         window.bluetooth.disconnect(onDisconnectedWithState);
     },
 
-    send: function(data){
-        window.bluetooth.write(function(){}, onBTError, data);
+    send: function(data, parsingFunction){
+        // Enqueue parsing function
+        Communication.parsingFunctionsQueue.push(parsingFunction);
+
+        window.bluetooth.write(function(){
+            Logger.log("Sent: " + data);
+        }, onBTError, data);
+    },
+
+    stopConnectionManager: function(callback){
+        window.bluetooth.stopConnectionManager(
+            function(){
+                console.log("Connection stopped.");
+                if(callback != undefined)
+                    callback();
+            }, onBTError);
     }
 });
 

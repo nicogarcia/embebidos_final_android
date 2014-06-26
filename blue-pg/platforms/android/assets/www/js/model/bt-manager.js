@@ -59,13 +59,13 @@ App.Model.BTManager = Backbone.Model.extend({
             BluetoothState.set({
                 state: App.Model.BluetoothState.Ready
             });
-            console.log("ERROR: %s", error.message);
+            onBTError(error);
         };
 
         window.bluetooth.disable(onSuccessWithState, onErrorWithState);
     },
 
-    discover: function(onDeviceDiscover, onDiscoveryFinish, onError){
+    discover: function(onDeviceDiscover, onDiscoveryFinish){
         BluetoothState.set({
             state: App.Model.BluetoothState.Busy
         });
@@ -81,8 +81,8 @@ App.Model.BTManager = Backbone.Model.extend({
             BluetoothState.set({
                 state: App.Model.BluetoothState.Ready
             });
-            onError();
-            Logger.log(error.message);
+            onBTError(error);
+            onDiscoveryFinish();
         };
 
         window.bluetooth.startDiscovery(onDeviceDiscover,
@@ -105,10 +105,7 @@ App.Model.BTManager = Backbone.Model.extend({
     },
 
     send: function(data){
-        var onError = function(error){
-            console.log(error.message);
-        };
-        window.bluetooth.write(function(){}, onError, data);
+        window.bluetooth.write(function(){}, onBTError, data);
     }
 });
 
