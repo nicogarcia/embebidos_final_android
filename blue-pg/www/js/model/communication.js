@@ -11,7 +11,15 @@ var LOGIN_CODE = '2',
     LIGHT_OFF = '3',
     LIGHT_ON = '4',
     LOCKED_CLOSED = '5',
-    LOCKED_OPENED = '6';
+    LOCKED_OPENED = '6',
+
+    LOGOUT = '3',
+
+    REQUEST_USERS = '7',
+
+    UNAUTHORIZED = '10',
+    ADD_USER = '0',
+    REMOVE_USER = '5';
 
 
 App.Model.Communication = Backbone.Model.extend({
@@ -43,8 +51,9 @@ App.Model.Communication = Backbone.Model.extend({
     onDataRead: function(data){
         Communication.readBuffer += data;
 
-        if(Communication.readBuffer.slice(-1) == '*') {
-            Logger.log("Read: " + Communication.readBuffer);
+        if(Communication.readBuffer.indexOf('*') != -1){
+            var message = Communication.readBuffer.slice(0, Communication.readBuffer.indexOf('*') + 1);
+            Logger.log("Read: " + message);
 
             if(Communication.parsingFunctionsQueue.length == 0){
                 Logger.log("Data recieved, but ignored.");
@@ -53,37 +62,44 @@ App.Model.Communication = Backbone.Model.extend({
                 var parsingFunction = Communication.parsingFunctionsQueue.shift();
 
                 // Parse arguments
-                var parameters = Communication.splitMessage(Communication.readBuffer);
+                var parameters = Communication.splitMessage(message);
 
                 // Call parsing function
                 parsingFunction(parameters);
             }
 
-            Communication.readBuffer = '';
+            Communication.readBuffer = Communication.readBuffer.slice(Communication.readBuffer.indexOf('*') + 1);
         }
     },
 
-    startLogin: function(user){
+    login: function(user){
         var message;
-        message = this.buildMessage(LOGIN_CODE,user.get('username'), user.get('password'));
+        message = this.buildMessage(
+            LOGIN_CODE,
+            user.get('username'),
+            user.get('password')
+        );
 
         var parsingFunction = function(parameters){
-            if(parameters[0] == ERROR){
+            if(parameters[0] == ERROR && parameters[1] != UNAUTHORIZED){
                 Logger.log("Login Error");
             } else {
-                UserView.onLogin(parameters[0] == SUCCESS);
+                UserView.onLogin(true);
             }
         };
 
         BTManager.send(message, parsingFunction);
     },
 
-    getState: function(user){
-        var message = this.buildMessage(REQUEST_STATE, user.get('username'));
+    getState: function(username) {
+        var message = this.buildMessage(
+            REQUEST_STATE,
+            username
+        );
 
-        var parsingFunction = function(parameters){
+        var parsingFunction = function (parameters) {
             // TODO: Add error mgmt
-            if(parameters[0] == SUCCESS){
+            if (parameters[0] == SUCCESS) {
                 ControlState.set({
                     lock_opened: parameters[1] == LOCKED_OPENED,
                     light_on: parameters[2] == LIGHT_ON,
@@ -92,6 +108,77 @@ App.Model.Communication = Backbone.Model.extend({
                     humidity: parameters[5]
                 });
             }
+            ControlView.render();
+        };
+
+        BTManager.send(message, parsingFunction);
+    },
+
+    logout: function(user){
+        var message = this.buildMessage(
+            LOGOUT,
+            user.get('username')
+        );
+
+        var parsingFunction = function(parameters){
+            // TODO: Add error mgmt
+            if(parameters[0] == SUCCESS){
+                UserView.model = new App.Model.User();
+
+                Router.navigate('login', true);
+            }
+        };
+
+        BTManager.send(message, parsingFunction);
+    },
+
+    requestUsers: function(username){
+        if(username == undefined)
+            Router.navigate('', true);
+
+        var message = this.buildMessage(REQUEST_USERS, username);
+
+        var parsingFunction = function(parameters){
+            // TODO: Add error mgmt
+            if(parameters[0] == SUCCESS){
+                UserListView.collection.reset();
+                $.each(parameters.slice(2), function (i, parameter) {
+                    UserListView.collection.add(new App.View.UserListItemView({
+                            model: new App.Model.User({ username: parameter })
+                        })
+                    );
+                });
+                UserListView.render();
+            }
+        };
+
+        BTManager.send(message, parsingFunction);
+    },
+
+    addUser: function(creator_username, new_user){
+        var message = this.buildMessage(
+            ADD_USER,
+            creator_username,
+            new_user.get('username'),
+            new_user.get('password')
+        );
+
+        var parsingFunction = function(parameters){
+            Communication.requestUsers(creator_username);
+        };
+
+        BTManager.send(message, parsingFunction);
+    },
+
+    removeUser: function(petitioner_username, target_username){
+        var message = this.buildMessage(
+            REMOVE_USER,
+            petitioner_username,
+            target_username
+        );
+
+        var parsingFunction = function (parameters) {
+            Communication.requestUsers(petitioner_username);
         };
 
         BTManager.send(message, parsingFunction);

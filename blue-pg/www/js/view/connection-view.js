@@ -50,7 +50,7 @@ App.View.DeviceView = Backbone.View.extend({
                 uuid: device.uuids[0],
                 address: self.model.get('address')
             });
-        }
+        };
 
         window.bluetooth.getUuids(gotUuids, onFail, self.model.get('address'));
     },
@@ -62,10 +62,6 @@ App.View.DeviceView = Backbone.View.extend({
 
     send: function(){
         BTManager.send($(".send-text").val());
-    },
-
-    tologin: function(){
-        gotologin();
     }
 });
 
@@ -87,65 +83,74 @@ App.View.DeviceListView = Backbone.View.extend({
 App.View.ConnectionView = Backbone.View.extend({
     template: "#connection-template",
 
-    init: function(){
-        // Initialize on and off buttons
-        var onEnable = function(){
-            BTManager.enable();
-        };
+    events: {
+        'click .btn-bt-on':         'enableBT',
+        'click .btn-bt-off':        'disableBT',
+        'click .btn-bt-discover':   'discoverBT'
+    },
 
-        var onDisable = function(){
-            BTManager.disable();
-        };
+    enableBT: function(){
+        BTManager.enable();
+    },
 
-        $('#btn-bt-on').on('click', onEnable);
-        $('#btn-bt-off').on('click', onDisable);
+    disableBT: function(){
+        BTManager.disable();
+        console.log("Disabling");
+    },
 
-        // Initialize discovery button
-        var onDiscover = function() {
-            var onDiscoveryFinished = function () {
-                BluetoothState.set({
-                    state: App.Model.BluetoothState.Ready
-                });
-                $('#btn-bt-discover').button('reset');
-            };
-            var onDeviceDiscovered = function (device) {
-                DeviceCollection.add(new App.Model.Device(device));
-                console.log("Device discovered: " + device.name);
-                // TODO: Move behaviour to BTManager
-                if(device.name == BTDeviceName)
-                    window.bluetooth.stopDiscovery(function(){
-                        onDiscoveryFinished();
-                    }, onBTError);
-            };
-
-            $('#btn-bt-discover').button('loading');
-
-            DeviceCollection.reset();
-
+    discoverBT: function(){
+        var onDiscoveryFinished = function () {
             BluetoothState.set({
-                state: App.Model.BluetoothState.Busy
+                state: App.Model.BluetoothState.Ready
             });
-
-            BTManager.discover(onDeviceDiscovered, onDiscoveryFinished, onBTError);
+            $('#btn-bt-discover').button('reset');
         };
-        $('#btn-bt-discover').on('click', onDiscover);
+        var onDeviceDiscovered = function (device) {
+            DeviceCollection.add(new App.Model.Device(device));
+            console.log("Device discovered: " + device.name);
+            // TODO: Move behaviour to BTManager
+            if(device.name == BTDeviceName)
+                window.bluetooth.stopDiscovery(function(){
+                    onDiscoveryFinished();
+                }, onBTError);
+        };
 
-        // Bind BluetoothState
-        BluetoothState.on('change', this.refreshBTState);
+        $('#btn-bt-discover').button('loading');
 
+        DeviceCollection.reset();
+
+        BluetoothState.set({
+            state: App.Model.BluetoothState.Busy
+        });
+
+        BTManager.discover(onDeviceDiscovered, onDiscoveryFinished, onBTError);
+    },
+
+    init: function(){
+        // Testing: nested in the next function
         var gotUuids = function(device){
             Logger.log("Got Uuids!");
             var onConnected = function(){
                 Logger.log("Connected with Device!");
+                Router.navigate('login', true);
+                console.log(window.location.href);
             };
             BTManager.connect(onConnected, device);
         };
 
-        var onDevicesRetrived = function(devices){
+        var onDevicesRetrieved = function(devices){
             $.each(devices, function(i, device){
                 if(device.name == BTDeviceName){
                     Logger.log("Device detected! Connecting...");
-                    window.bluetooth.getUuids(gotUuids, onBTError, device.address);
+                    window.bluetooth.getUuids(function(device){
+                        Logger.log("Got Uuids!");
+                        var onConnected = function(){
+                            Logger.log("Connected with Device!");
+                            Router.navigate('login', true);
+                            console.log(window.location.href);
+                        };
+                        BTManager.connect(onConnected, device);
+                    }, onBTError, device.address);
                     return;
                 }
             });
@@ -153,17 +158,22 @@ App.View.ConnectionView = Backbone.View.extend({
 
         var onConnected = function(connected){
             if(connected){
-                Logger.log("Connection detected.");
-                BTManager.disconnect(function(){
-                    Logger.log("Disconected.");
+                Logger.log("Connection detected. Reestablishing management...");
+                BTManager.startConnectionManager();
+                Logger.log("Done");
+                Router.navigate('login', true);
 
-                    window.bluetooth.getPaired(onDevicesRetrived, onBTError);
+                //BTManager.disconnect(function(){
+                    //Logger.log("Disconected.");
 
-                    gotologin();
-                });
+                    // Testing
+                    //setTimeout(window.bluetooth.getPaired(onDevicesRetrieved, onBTError),
+                    //    1000);
+
+                //});
+
             }else{
-                window.bluetooth.getPaired(onDevicesRetrived, onBTError);
-                gotologin();
+                window.bluetooth.getPaired(onDevicesRetrieved, onBTError);
             }
         };
         window.bluetooth.isConnected(onConnected, onBTError);
@@ -203,10 +213,5 @@ App.View.ConnectionView = Backbone.View.extend({
                 $('.btn-bt-disconnect').enable();
                 break;
         }
-    },
-
-    afterRender: function(){
-        this.refreshBTState();
     }
-
 });

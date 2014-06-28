@@ -8,6 +8,7 @@
 
     <!-- Bootstrap styles -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen" />
+    <link href="css/bootstrap3/bootstrap-switch.min.css" rel="stylesheet" media="screen" />
     <link href="css/sisad.css" rel="stylesheet" media="screen" />
 
     <title>SISAD</title>
@@ -17,7 +18,7 @@
 <!-- Every application needs a topbar, right? -->
 <nav class="navbar navbar-default" role="navigation">
     <div class="navbar-header">
-        <a href="#" class="navbar-brand">SISAD</a>
+        <a href="#/" class="navbar-brand">SISAD</a>
     </div>
 </nav>
 
@@ -36,12 +37,12 @@
     <!-- On and Off buttons -->
     <div class="row">
         <div class="col-xs-6">
-            <button id="btn-bt-on" type="button" class="btn btn-success btn-lg btn-block btn-bt" disabled>
+            <button id="btn-bt-on" type="button" class="btn btn-success btn-lg btn-block btn-bt-on" disabled>
                 On
             </button>
         </div>
         <div class="col-xs-6">
-            <button id="btn-bt-off" type="button" class="btn btn-danger btn-lg btn-block btn-bt" disabled>
+            <button id="btn-bt-off" type="button" class="btn btn-danger btn-lg btn-block btn-bt-off" disabled>
                 Off
             </button>
         </div>
@@ -50,7 +51,7 @@
     <!-- Discovery button -->
     <div class="row" style="margin-top:16px;">
         <div class="col-md-12">
-            <button id="btn-bt-discover" type="button" class="btn btn-info btn-lg btn-block btn-bt" data-loading-text="Discovering..." disabled>
+            <button id="btn-bt-discover" type="button" class="btn btn-info btn-lg btn-block btn-bt-discover" data-loading-text="Discovering..." disabled>
                 <span class="glyphicon glyphicon-eye-open"></span> Start Discovery
             </button>
         </div>
@@ -84,18 +85,12 @@
             </div>
             <% if(isConnected) { %>
             <div class='row'>
-                <div class='col-xs-8'>
-                    <input class="send-text" />
-                </div>
-                <div class='col-xs-4'>
-                    <button type='button' class='btn btn-info btn-block btn-bt-send'>
-                        <span class='glyphicon glyphicon-check'></span> Send
+                <div class='col-xs-12'>
+                    <button type='button' class='btn btn-info btn-block btn-bt-login'>
+                        <span class='glyphicon glyphicon-arrow-right'></span> Login
                     </button>
                 </div>
             </div>
-            <button type='button' class='btn btn-info btn-block btn-bt-login'>
-                <span class='glyphicon glyphicon-arrow-right'></span> Login
-            </button>
             <% } %>
         </div>
     </div>
@@ -121,37 +116,111 @@
 
 <!-- The control page template -->
 <script type="text/template" id="control-template">
-    <h4>
-        User: <%= user.username %>
-        <% if(user.connected){ %>
-        (Online)
-        <% } else { %>
-        (Offline)
-        <% } %>
-    </h4>
+    <div class="row">
+        <div class="col-xs-8">
+            <h4>
+                Hello, <%= user.username %>!
+            </h4>
+        </div>
+        <div class="col-xs-4">
+            <button class="btn btn-block btn-success btn-logout">Logout</button>
+        </div>
+    </div>
     <div class="row">
         <div class="col-xs-6">
             <div class="panel panel-default panel-body">
-                <h4>Temperature<br><%= temperature %></h4>
+                <h4>Temperature<br><%= temperature %>°</h4>
             </div>
         </div>
         <div class="col-xs-6">
             <div class="panel panel-default panel-body">
-                <h4>Humidity<br><%= humidity %></h4>
+                <h4>Humidity<br><%= humidity %>%</h4>
             </div>
         </div>
     </div>
-    <button type="button" class="btn btn-info btn-lg btn-block btn-refresh-state">
-        <span class="glyphicon glyphicon-refresh"></span> Refresh
-    </button>
+    <div class="row">
+        <div class="col-xs-7">
+            <label>Lock State</label>
+        </div>
+        <div class="col-xs-5">
+            <input type="checkbox" id="chk-lock-opened" checked>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-7">
+            <label>Light Activation</label>
+        </div>
+        <div class="col-xs-5">
+            <input type="checkbox" id="chk-light-enabled" checked>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <button type="button" class="btn btn-info btn-lg btn-block btn-refresh-state">
+                <span class="glyphicon glyphicon-refresh"></span> Refresh State
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <a href="#/users/<%= user.username %>" type="button" class="btn btn-info btn-lg btn-block btn-refresh-state">
+                <span class="glyphicon glyphicon-user"></span> Users
+            </a>
+        </div>
+    </div>
 
     <!-- The view for the logger -->
     <div class="logger"></div>
 </script>
 
+<!-- The user list item template -->
+<script type="text/template" id="user-item-template">
+    <div class="col-xs-12">
+        <div class='panel panel-default' style='margin-top:16px;'>
+            <div class='panel-body'>
+                <div class='row'>
+                    <div class='col-xs-8'><b><%= username %></b></div>
+                    <div class='col-xs-4'>
+                        <button type='button' class='btn btn-danger btn-block btn-bt btn-remove-user'>
+                            <span class='glyphicon glyphicon-remove'></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- The user list template -->
+<script type="text/template" id="user-list-template">
+    <div class="row user-item-container"></div>
+
+    <div class='row'>
+        <div class="col-xs-12">
+            <div class="new-user">
+                <div class="form-group">
+                    <label>User</label>
+                    <input type="text" class="form-control username"  value="pepe" placeholder="User">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control password"  value="4321" placeholder="Password">
+                </div>
+            </div>
+            <button type='button' class='btn btn-success btn-block btn-lg btn-add-user'>
+                <span class='glyphicon glyphicon-plus'></span> Add user
+            </button>
+        </div>
+    </div>
+    <!-- The view for the logger -->
+    <div class="logger"></div>
+</script>
+
+
 <!-- Our precious libraries -->
 <script src="bower_components/jquery/dist/jquery.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="js/bootstrap-switch.min.js"></script>
 <script src="bower_components/underscore/underscore.js"></script>
 <script src="bower_components/backbone/backbone.js"></script>
 <script src="bower_components/layoutmanager/backbone.layoutmanager.js"></script>
@@ -170,6 +239,8 @@
 <script src="js/view/connection-view.js"></script>
 <script src="js/model/logger-model.js"></script>
 <script src="js/view/logger-view.js"></script>
+<script src="js/view/list-user-view.js"></script>
+<script src="js/controller/router.js"></script>
 
 </body>
 </html>

@@ -96,7 +96,7 @@ App.Model.BTManager = Backbone.Model.extend({
     connect: function(onConnected, device){
         var self = this;
         var onConnectedProxy = function(){
-            window.bluetooth.startConnectionManager(Communication.onDataRead, onBTError);
+            self.startConnectionManager();
             onConnected();
         };
 
@@ -128,6 +128,10 @@ App.Model.BTManager = Backbone.Model.extend({
         window.bluetooth.write(function(){
             Logger.log("Sent: " + data);
         }, onBTError, data);
+    },
+
+    startConnectionManager: function(){
+        window.bluetooth.startConnectionManager(Communication.onDataRead, onBTError);
     },
 
     stopConnectionManager: function(callback){
