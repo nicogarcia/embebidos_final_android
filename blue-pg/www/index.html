@@ -19,12 +19,20 @@
 <nav class="navbar navbar-default" role="navigation">
     <div class="navbar-header">
         <a href="#/" class="navbar-brand">SISAD</a>
+        <button type="button" class="btn btn-default navbar-btn navbar-right">Logout</button>
     </div>
 </nav>
 
 <!-- Actual content of the application hosted here -->
 <div class="container">
     <div id="page-container"></div>
+    <!-- <div class="box">
+        <img class="android" src="img/android-icon.png" height='100'/>
+        <div class="con"></div>
+        <div class="byte"></div>
+        <img class="arduino" src="img/arduino-icon.png" height='100'/>
+    </div>
+    -->
 </div>
 
 <!-- The logger template -->
@@ -128,32 +136,62 @@
     </div>
     <div class="row">
         <div class="col-xs-6">
-            <div class="panel panel-default panel-body">
-                <h4>Temperature<br><%= temperature %>°</h4>
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    Temperature
+                </div>
+                <div class="panel-body">
+                    <div class="panel-text"><%= temperature %>°
+                    <img src="img/temperature-<%= temperature > 23 ? 'high' : 'low' %>-icon.png" height="48" />
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-xs-6">
-            <div class="panel panel-default panel-body">
-                <h4>Humidity<br><%= humidity %>%</h4>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Humidity
+                </div>
+                <div class="panel-body">
+                    <div class="panel-text"><%= humidity %>%
+                        <img src="img/humidity-icon.png" height="48" />
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xs-7">
-            <label>Lock State</label>
-        </div>
-        <div class="col-xs-5">
-            <input type="checkbox" id="chk-lock-opened" checked>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-7">
-            <label>Light Activation</label>
-        </div>
-        <div class="col-xs-5">
-            <input type="checkbox" id="chk-light-enabled" checked>
-        </div>
-    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-xs-7">
+                    <label>Lock State</label>
+                </div>
+                <div class="col-xs-5">
+                    <input type="checkbox" class="chk-lock-opened" checked>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-xs-7">
+                    <label>Light Activation</label>
+                </div>
+                <div class="col-xs-5">
+                    <input type="checkbox" class="chk-light-enabled" checked>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-xs-7">
+                    <label>Light State</label>
+                </div>
+                <div class="col-xs-5">
+                    <img src="img/light_<%= light_on ? 'on' : 'off' %>.png" height="48" class="light-img"/>
+                </div>
+            </div>
+        </li>
+    </ul>
     <div class="row">
         <div class="col-xs-12">
             <button type="button" class="btn btn-info btn-lg btn-block btn-refresh-state">
@@ -176,7 +214,7 @@
 <!-- The user list item template -->
 <script type="text/template" id="user-item-template">
     <div class="col-xs-12">
-        <div class='panel panel-default' style='margin-top:16px;'>
+        <div class='panel panel-default'>
             <div class='panel-body'>
                 <div class='row'>
                     <div class='col-xs-8'><b><%= username %></b></div>
@@ -241,6 +279,7 @@
 <script src="js/view/logger-view.js"></script>
 <script src="js/view/list-user-view.js"></script>
 <script src="js/controller/router.js"></script>
+<script src="js/model/error-manager.js"></script>
 
 </body>
 </html>

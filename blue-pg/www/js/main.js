@@ -29,12 +29,6 @@ var UserViewCollection;
 var UserListView;
 var Router;
 
-var onBTError = function(error){
-    console.log(error.message);
-    if(Logger != undefined)
-        Logger.log(error.message);
-};
-
 $(function() {
         Communication = new App.Model.Communication();
 

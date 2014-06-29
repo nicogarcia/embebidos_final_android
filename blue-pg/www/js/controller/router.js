@@ -22,7 +22,7 @@ App.Router = Backbone.Router.extend({
     },
 
     control: function(username){
-        Communication.getState(username);
+        Communication.requestState(username);
         ControlView.setView('.logger', LoggerView);
         $('#page-container').empty().append(ControlView.$el);
         ControlView.render();

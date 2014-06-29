@@ -147,7 +147,6 @@ App.View.ConnectionView = Backbone.View.extend({
                         var onConnected = function(){
                             Logger.log("Connected with Device!");
                             Router.navigate('login', true);
-                            console.log(window.location.href);
                         };
                         BTManager.connect(onConnected, device);
                     }, onBTError, device.address);

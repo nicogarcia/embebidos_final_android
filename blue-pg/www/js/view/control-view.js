@@ -3,7 +3,9 @@ App.View.ControlView = Backbone.View.extend({
 
     events: {
         'click .btn-refresh-state': 'refreshState',
-        'click .btn-logout': 'logout'
+        'click .btn-logout': 'logout',
+        'switchChange.bootstrapSwitch .chk-lock-opened' : 'toggleLock',
+        'switchChange.bootstrapSwitch .chk-light-enabled' : 'toggleLight'
     },
 
     initialize: function(){
@@ -22,16 +24,24 @@ App.View.ControlView = Backbone.View.extend({
     },
 
     refreshState: function(){
-        Communication.getState(this.model.get('user').get('username'));
+        Communication.requestState(this.model.get('user').get('username'));
     },
 
     afterRender: function(){
-        $("#chk-lock-opened").bootstrapSwitch('state', this.model.get('lock_opened'));
+        $(".chk-lock-opened").bootstrapSwitch('state', this.model.get('lock_opened'), true);
 
-        $("#chk-light-enabled").bootstrapSwitch('state', this.model.get('light_enabled'));
+        $(".chk-light-enabled").bootstrapSwitch('state', this.model.get('light_enabled'), true);
     },
 
     logout: function(){
         Communication.logout(this.model.get('user'));
+    },
+
+    toggleLock: function(event, state) {
+        Communication.toggleLock(ControlState.get('user').get('username'));
+    },
+
+    toggleLight: function(event, state) {
+        Communication.toggleLight(ControlState.get('user').get('username'));
     }
 });
