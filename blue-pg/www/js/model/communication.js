@@ -32,16 +32,13 @@ var MessageParameters = {
     USER_TABLE_FULL         : '13'
 };
 
-
 App.Model.Communication = Backbone.Model.extend({
 
     readBuffer: '',
 
     parsingFunctionsQueue: [],
 
-    initialize: function(){
-        this.parsingFunctionsQueue = new Array();
-    },
+    sentMessageQueue: [],
 
     /*
      MESSAGE PROCESSING UTILITIES
@@ -67,7 +64,6 @@ App.Model.Communication = Backbone.Model.extend({
 
         if(Communication.readBuffer.indexOf('*') != -1){
             var message = Communication.readBuffer.slice(0, Communication.readBuffer.indexOf('*') + 1);
-            Logger.log("Read: " + message);
 
             if(Communication.parsingFunctionsQueue.length == 0){
                 Logger.log("Data recieved, but ignored.");
@@ -75,14 +71,42 @@ App.Model.Communication = Backbone.Model.extend({
                 // Dequeue next parsing function
                 var parsingFunction = Communication.parsingFunctionsQueue.shift();
 
+                // Dequeue corresponding sent message
+                Communication.sentMessageQueue.shift();
+
                 // Parse arguments
                 var parameters = Communication.splitMessage(message);
 
+                if(parameters.length < 6)
+                    Logger.log("Read: " + message);
+
                 // Call parsing function
-                parsingFunction(parameters);
+                setTimeout(parsingFunction(parameters), 10);
+
+                if(Communication.sentMessageQueue.length > 0){
+                    setTimeout(BTManager.send(Communication.sentMessageQueue[0]), 10);
+                }
             }
 
             Communication.readBuffer = Communication.readBuffer.slice(Communication.readBuffer.indexOf('*') + 1);
+        }
+    },
+
+    send: function(data, parsingFunction){
+        if(ConnectionState.get('connectionManaged')) {
+            // Enqueue parsing and sending function
+            this.parsingFunctionsQueue.push(parsingFunction);
+            this.sentMessageQueue.push(data);
+
+            $('#send_queue_lenght').html(this.sentMessageQueue.length);
+
+            // If the only function in queue is the recently added, send data
+            if (this.parsingFunctionsQueue.length == 1) {
+                BTManager.send(data);
+            }
+
+        }else{
+            Logger.log("Error sending data. Connection isn't managed.")
         }
     },
 
@@ -101,7 +125,7 @@ App.Model.Communication = Backbone.Model.extend({
             Communication.requestUsers(creator_username);
         };
 
-        BTManager.send(message, parsingFunction);
+        Communication.send(message, parsingFunction);
     },
 
     changePassword: function(username, new_password){
@@ -117,7 +141,7 @@ App.Model.Communication = Backbone.Model.extend({
             }
         };
 
-        BTManager.send(message, parsingFunction);
+        Communication.send(message, parsingFunction);
     },
 
     login: function(user){
@@ -129,14 +153,14 @@ App.Model.Communication = Backbone.Model.extend({
         );
 
         var parsingFunction = function(parameters){
-            if(parameters[0] == Response.ERROR && parameters[1] != MessageParameters.UNAUTHORIZED){
+            if((parameters[0] == Response.ERROR) && (parameters[1] != MessageParameters.UNAUTHORIZED)){
                 Logger.log("Login Error");
             } else {
                 UserView.onLogin(true);
             }
         };
 
-        BTManager.send(message, parsingFunction);
+        Communication.send(message, parsingFunction);
     },
 
     logout: function(user){
@@ -155,7 +179,7 @@ App.Model.Communication = Backbone.Model.extend({
             }
         };
 
-        BTManager.send(message, parsingFunction);
+        Communication.send(message, parsingFunction);
     },
 
     refreshTtl: function(username){
@@ -170,7 +194,7 @@ App.Model.Communication = Backbone.Model.extend({
             }
         };
 
-        BTManager.send(message, parsingFunction);
+        Communication.send(message, parsingFunction);
     },
 
     removeUser: function(petitioner_username, target_username){
@@ -184,7 +208,7 @@ App.Model.Communication = Backbone.Model.extend({
             Communication.requestUsers(petitioner_username);
         };
 
-        BTManager.send(message, parsingFunction);
+        Communication.send(message, parsingFunction);
     },
 
     requestState: function(username) {
@@ -204,10 +228,9 @@ App.Model.Communication = Backbone.Model.extend({
                     humidity: parameters[5]
                 });
             }
-            ControlView.render();
         };
 
-        BTManager.send(message, parsingFunction);
+        Communication.send(message, parsingFunction);
     },
 
     requestUsers: function(username){
@@ -230,10 +253,11 @@ App.Model.Communication = Backbone.Model.extend({
                     );
                 });
                 UserListView.render();
+                Router.navigate('users', true);
             }
         };
 
-        BTManager.send(message, parsingFunction);
+        Communication.send(message, parsingFunction);
     },
 
     toggleLight: function(username){
@@ -248,7 +272,7 @@ App.Model.Communication = Backbone.Model.extend({
             }
         };
 
-        BTManager.send(message, parsingFunction);
+        Communication.send(message, parsingFunction);
     },
 
     toggleLock: function(username){
@@ -263,7 +287,7 @@ App.Model.Communication = Backbone.Model.extend({
             }
         };
 
-        BTManager.send(message, parsingFunction);
+        Communication.send(message, parsingFunction);
     }
 
 });

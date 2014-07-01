@@ -3,8 +3,8 @@ App.Router = Backbone.Router.extend({
     routes: {
         ''                  :   'connection',
         'login'             :   'login',
-        'control/:username' :   'control',
-        'users/:username'   :   'users'
+        'control'           :   'control',
+        'users'             :   'users'
     },
 
     connection: function(){
@@ -21,18 +21,20 @@ App.Router = Backbone.Router.extend({
         UserView.render();
     },
 
-    control: function(username){
-        Communication.requestState(username);
-        ControlView.setView('.logger', LoggerView);
-        $('#page-container').empty().append(ControlView.$el);
-        ControlView.render();
+    control: function(){
+        if(ConnectionState.get('loggedIn')){
+            //Communication.requestState(ControlState.get('user').get('username'));
+            ControlView.setView('.logger', LoggerView);
+            $('#page-container').empty().append(ControlView.$el);
+            ControlView.render();
+        } else {
+            Router.navigate('');
+        }
     },
 
-    users: function(username){
-        Communication.requestUsers(username);
-
-        $('#page-container').empty().append(UserListView.$el);
+    users: function(){
         UserListView.setView('.logger', LoggerView);
+        $('#page-container').empty().append(UserListView.$el);
         UserListView.render();
     }
 });

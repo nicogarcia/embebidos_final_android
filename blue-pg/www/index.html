@@ -18,8 +18,8 @@
 <!-- Every application needs a topbar, right? -->
 <nav class="navbar navbar-default" role="navigation">
     <div class="navbar-header">
-        <a href="#/" class="navbar-brand">SISAD</a>
-        <button type="button" class="btn btn-default navbar-btn navbar-right">Logout</button>
+        <a href="#/" class="navbar-brand">SISAD </a>
+        <span id="send_queue_lenght"></span><button type="button" class="btn btn-default navbar-btn navbar-right">Logout</button>
     </div>
 </nav>
 
@@ -141,8 +141,10 @@
                     Temperature
                 </div>
                 <div class="panel-body">
-                    <div class="panel-text"><%= temperature %>°
-                    <img src="img/temperature-<%= temperature > 23 ? 'high' : 'low' %>-icon.png" height="48" />
+                    <div class="panel-text">
+                        <span id="temperature_text"><%= temperature %></span>°
+                        <img id="temp_high" src="img/temperature-high-icon.png" height="48" style="display: none;"/>
+                        <img id="temp_low" src="img/temperature-low-icon.png" height="48" />
                     </div>
                 </div>
             </div>
@@ -153,7 +155,8 @@
                     Humidity
                 </div>
                 <div class="panel-body">
-                    <div class="panel-text"><%= humidity %>%
+                    <div class="panel-text">
+                        <span id="humidity_text"><%= humidity %></span>%
                         <img src="img/humidity-icon.png" height="48" />
                     </div>
                 </div>
@@ -187,7 +190,8 @@
                     <label>Light State</label>
                 </div>
                 <div class="col-xs-5">
-                    <img src="img/light_<%= light_on ? 'on' : 'off' %>.png" height="48" class="light-img"/>
+                    <img id="light_on" src="img/light_on.png" height="48"class="light-img" style="display: none;"/>
+                    <img id="light_off" src="img/light_off.png" height="48" class="light-img"/>
                 </div>
             </div>
         </li>
@@ -201,9 +205,9 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <a href="#/users/<%= user.username %>" type="button" class="btn btn-info btn-lg btn-block btn-refresh-state">
+            <button type="button" class="btn btn-info btn-lg btn-block btn-show-users">
                 <span class="glyphicon glyphicon-user"></span> Users
-            </a>
+            </button>
         </div>
     </div>
 
@@ -280,6 +284,7 @@
 <script src="js/view/list-user-view.js"></script>
 <script src="js/controller/router.js"></script>
 <script src="js/model/error-manager.js"></script>
+<script src="js/model/connection-state.js"></script>
 
 </body>
 </html>

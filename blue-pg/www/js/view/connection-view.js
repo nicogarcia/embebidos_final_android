@@ -95,14 +95,10 @@ App.View.ConnectionView = Backbone.View.extend({
 
     disableBT: function(){
         BTManager.disable();
-        console.log("Disabling");
     },
 
     discoverBT: function(){
         var onDiscoveryFinished = function () {
-            BluetoothState.set({
-                state: App.Model.BluetoothState.Ready
-            });
             $('#btn-bt-discover').button('reset');
         };
         var onDeviceDiscovered = function (device) {
@@ -119,60 +115,40 @@ App.View.ConnectionView = Backbone.View.extend({
 
         DeviceCollection.reset();
 
-        BluetoothState.set({
-            state: App.Model.BluetoothState.Busy
-        });
-
         BTManager.discover(onDeviceDiscovered, onDiscoveryFinished, onBTError);
     },
 
     init: function(){
-        // Testing: nested in the next function
-        var gotUuids = function(device){
-            Logger.log("Got Uuids!");
-            var onConnected = function(){
-                Logger.log("Connected with Device!");
-                Router.navigate('login', true);
-                console.log(window.location.href);
-            };
-            BTManager.connect(onConnected, device);
-        };
-
-        var onDevicesRetrieved = function(devices){
-            $.each(devices, function(i, device){
-                if(device.name == BTDeviceName){
-                    Logger.log("Device detected! Connecting...");
-                    window.bluetooth.getUuids(function(device){
-                        Logger.log("Got Uuids!");
-                        var onConnected = function(){
-                            Logger.log("Connected with Device!");
-                            Router.navigate('login', true);
-                        };
-                        BTManager.connect(onConnected, device);
-                    }, onBTError, device.address);
-                    return;
-                }
-            });
-        };
-
         var onConnected = function(connected){
             if(connected){
-                Logger.log("Connection detected. Reestablishing management...");
+                ConnectionState.set({
+                    connected: true
+                });
                 BTManager.startConnectionManager();
-                Logger.log("Done");
-                Router.navigate('login', true);
-
-                //BTManager.disconnect(function(){
-                    //Logger.log("Disconected.");
-
-                    // Testing
-                    //setTimeout(window.bluetooth.getPaired(onDevicesRetrieved, onBTError),
-                    //    1000);
-
-                //});
-
             }else{
-                window.bluetooth.getPaired(onDevicesRetrieved, onBTError);
+                var onDeviceDiscovered = function(device){
+                    if(device.name == BTDeviceName){
+                        ConnectionState.set({
+                            deviceDetected: true
+                        });
+                        window.bluetooth.stopDiscovery(
+                            window.bluetooth.getUuids(function (device) {
+                                console.log("Got Uuids!");
+                                BTManager.connect(function () {
+                                    console.log("Connected!");
+                                }, device);
+                            }, onBTError, device.address)
+                        , onBTError);
+                    }
+                };
+                var onDiscoveryFinish = function () {
+                    if (!ConnectionState.get('deviceDetected')) {
+                        console.log('Device not detected!');
+                    }
+                };
+
+                console.log('Discovering device...');
+                BTManager.discover(onDeviceDiscovered, onDiscoveryFinish);
             }
         };
         window.bluetooth.isConnected(onConnected, onBTError);

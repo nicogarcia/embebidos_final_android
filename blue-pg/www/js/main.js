@@ -17,6 +17,7 @@ var App = {
 };
 
 var BTManager;
+var ConnectionState;
 var DeviceCollection;
 var DeviceListView;
 var ConnectionView;
@@ -30,6 +31,8 @@ var UserListView;
 var Router;
 
 $(function() {
+        ConnectionState = new App.Model.ConnectionState();
+
         Communication = new App.Model.Communication();
 
         // Create logger and its view

@@ -20,9 +20,12 @@ App.Model.BTManager = Backbone.Model.extend({
     waiting: false,
 
     initialize: function(){
+        var self = this;
         window.bluetooth.isEnabled(function(isEnabled) {
+            if(!isEnabled)
+                self.enable();
             BluetoothState.set({
-                state: isEnabled ? App.Model.BluetoothState.Ready : App.Model.BluetoothState.Off
+                state: App.Model.BluetoothState.Ready
             });
         });
     },
@@ -96,6 +99,9 @@ App.Model.BTManager = Backbone.Model.extend({
     connect: function(onConnected, device){
         var self = this;
         var onConnectedProxy = function(){
+            ConnectionState.set({
+                connected: true
+            });
             self.startConnectionManager();
             onConnected();
         };
@@ -115,23 +121,32 @@ App.Model.BTManager = Backbone.Model.extend({
             BluetoothState.set({
                 state: App.Model.BluetoothState.Ready
             });
+            ConnectionState.set({
+                connected: false,
+                connectionManaged: false
+            });
             onDisconnected();
         };
 
         window.bluetooth.disconnect(onDisconnectedWithState);
     },
 
-    send: function(data, parsingFunction){
-        // Enqueue parsing function
-        Communication.parsingFunctionsQueue.push(parsingFunction);
-
-        window.bluetooth.write(function(){
-            Logger.log("Sent: " + data);
+    send: function(data){
+        window.bluetooth.write(function () {
+            if(data[1] != '6')
+                Logger.log("Sent: " + data);
         }, onBTError, data);
     },
 
     startConnectionManager: function(){
-        window.bluetooth.startConnectionManager(Communication.onDataRead, onBTError);
+        if(ConnectionState.get('connected')) {
+            ConnectionState.set({
+                connectionManaged: true
+            });
+            window.bluetooth.startConnectionManager(Communication.onDataRead, onBTError);
+        }else{
+            Logger.log('Device not connected. Cannot manage connection.');
+        }
     },
 
     stopConnectionManager: function(callback){

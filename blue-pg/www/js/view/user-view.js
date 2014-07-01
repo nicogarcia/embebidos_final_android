@@ -16,21 +16,15 @@ App.View.UserView = Backbone.View.extend({
     },
 
     onLogin: function(loggedIn){
-
         if(loggedIn){
-            this.model.set({
-                connected: true
-            });
-
             ControlState.set({
                 user: this.model.clone()
             });
-            Router.navigate("control/" + this.model.get('username'), true);
+            ConnectionState.set({
+                loggedIn : true
+            });
         }else {
             Logger.log("Login Error");
         }
-    },
-
-    afterRender: function(){
     }
 });
