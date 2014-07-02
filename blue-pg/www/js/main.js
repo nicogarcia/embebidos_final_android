@@ -64,7 +64,7 @@ $(function() {
 
         Router = new App.Router();
 
-        Router.navigate('', true);
+        Router.navigate('', true, true);
 
         // TODO: Debug. pushState should be true for native app
         Backbone.history.start({pushState: false});
@@ -74,7 +74,7 @@ $(function() {
 var onDeviceReady = function() {
     console.log("Device Ready!");
 
-    document.addEventListener("backbutton", function(){}, false);
+    //document.addEventListener("backbutton", function(){}, false);
 
     // Create state and BTManager
     BluetoothState = new App.Model.BluetoothState({
@@ -88,6 +88,7 @@ var onDeviceReady = function() {
     BTConnection = new App.Model.BTConnection();
 
     BTConnection.trigger('bt-initial');
+
     //BTManager.tryConnection();
 };
 

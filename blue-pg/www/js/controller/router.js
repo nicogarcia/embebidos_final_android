@@ -13,6 +13,7 @@ App.Router = Backbone.Router.extend({
     },
 
     connection: function(){
+
         // Append connection to the container and render
         //ConnectionView.setView("#list-devices", DeviceListView);
         ConnectionView.setView(".logger", LoggerView);

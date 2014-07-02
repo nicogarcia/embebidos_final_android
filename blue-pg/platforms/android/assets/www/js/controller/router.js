@@ -43,8 +43,17 @@ App.Router = Backbone.Router.extend({
         UserListView.render();
     },
 
+    addBackHeader: function(){
+        $(".btn-back").show();
+        $(".btn-back").on('click',
+            function () {
+                window.history.back();
+                $(".btn-back").hide();
+            });
+    },
+
     addLoggedHeader: function(username){
-        $("#username-label").html(username);
+        $("#username-label").html(' - ' + username);
         $(".btn-logout").show();
         $(".btn-logout").on('click',
             function () {
@@ -56,7 +65,7 @@ App.Router = Backbone.Router.extend({
     },
 
     removeLoggedHeader: function(){
-        $("#username-label").html();
+        $("#username-label").html('');
         $(".btn-logout").hide();
     }
 });

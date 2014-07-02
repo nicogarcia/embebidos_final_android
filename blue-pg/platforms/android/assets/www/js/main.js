@@ -74,6 +74,8 @@ $(function() {
 var onDeviceReady = function() {
     console.log("Device Ready!");
 
+    document.addEventListener("backbutton", function(){}, false);
+
     // Create state and BTManager
     BluetoothState = new App.Model.BluetoothState({
         state: App.Model.BluetoothState.Busy
