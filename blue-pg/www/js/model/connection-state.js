@@ -12,26 +12,37 @@ App.Model.ConnectionState = Backbone.Model.extend({
 
     initialize: function(){
         this.on('change:connected', this.connectedChanged);
-        this.on('change:connectionManaged', this.connectionManagedChanged);
-        this.on('change:deviceDetected', this.deviceDetectedChanged);
         this.on('change:loggedIn', this.loggedInChanged);
     },
 
     connectedChanged: function(){
         if(this.get('connected')) {
-            Logger.log("Connected with Device!");
+            ConnectionState.set({
+                deviceDetected: true,
+                connectionManaged: true,
+                loggedIn: false
+            }, {silent: true});
+
+            if(window.localStorage.getItem('username') != null){
+                console.log("User and pass retrieved!");
+
+                UserView.savedLogin(
+                    window.localStorage.getItem('username'),
+                    window.localStorage.getItem('password')
+                );
+            }else{
+                Router.navigate('login', true, true);
+            }
+
         } else {
+            ConnectionState.set({
+                deviceDetected: false,
+                connectionManaged: false,
+                loggedIn: false
+            }, {silent: true});
+            Router.navigate('connection', true, true);
             Logger.log("Device disconnected.");
         }
-    },
-
-    connectionManagedChanged: function(){
-        Logger.log("Connection Managed!");
-        Router.navigate('login', true);
-    },
-
-    deviceDetectedChanged: function(){
-        Logger.log('Device detected. Connecting...');
     },
 
     loggedInChanged: function(){
@@ -53,9 +64,16 @@ App.Model.ConnectionState = Backbone.Model.extend({
                 }, STATE_REQUEST_INTERVAL)
             });
 
-            Router.navigate("control", true);
+            Communication.requestState(username);
+
+            Router.navigate("control", true, true);
         } else{
             Logger.log("Logged Out.");
+
+            window.localStorage.removeItem('username');
+            window.localStorage.removeItem('password');
+
+            Communication.clearQueues();
 
             clearInterval(this.get('ttlCallerId'));
             clearInterval(this.get('stateCallerId'));

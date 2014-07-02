@@ -7,9 +7,14 @@ App.Router = Backbone.Router.extend({
         'users'             :   'users'
     },
 
+    execute: function(callback, args){
+        this.removeLoggedHeader();
+        callback.apply(this, args);
+    },
+
     connection: function(){
         // Append connection to the container and render
-        ConnectionView.setView("#list-devices", DeviceListView);
+        //ConnectionView.setView("#list-devices", DeviceListView);
         ConnectionView.setView(".logger", LoggerView);
         $('#page-container').empty().append(ConnectionView.$el);
         ConnectionView.render();
@@ -36,5 +41,22 @@ App.Router = Backbone.Router.extend({
         UserListView.setView('.logger', LoggerView);
         $('#page-container').empty().append(UserListView.$el);
         UserListView.render();
+    },
+
+    addLoggedHeader: function(username){
+        $("#username-label").html(username);
+        $(".btn-logout").show();
+        $(".btn-logout").on('click',
+            function () {
+                Communication.logout(username);
+                ConnectionState.set({
+                    loggedIn: false
+                });
+            });
+    },
+
+    removeLoggedHeader: function(){
+        $("#username-label").html();
+        $(".btn-logout").hide();
     }
 });

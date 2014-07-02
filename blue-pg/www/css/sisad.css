@@ -1,4 +1,6 @@
-
+.navbar {
+    margin-bottom: 5px;
+}
 .panel-body, .panel-heading {
     text-align: center;
 }

@@ -18,8 +18,14 @@
 <!-- Every application needs a topbar, right? -->
 <nav class="navbar navbar-default" role="navigation">
     <div class="navbar-header">
-        <a href="#/" class="navbar-brand">SISAD </a>
-        <span id="send_queue_lenght"></span><button type="button" class="btn btn-default navbar-btn navbar-right">Logout</button>
+        <a href="#/" class="navbar-brand">SISAD</a>
+        <div class="navbar-brand"> - </div>
+        <span id="username-label"></span>
+        <span id="send_queue_lenght"></span>
+        <button type="button" class="btn btn-default navbar-btn navbar-right btn-logout"
+                style="display: none;">
+            Logout
+        </button>
     </div>
 </nav>
 
@@ -68,54 +74,30 @@
     <!-- The found devices appear inside this div -->
     <div id="list-devices"></div>
 
+    <button type='button' class='btn btn-success btn-block btn-lg btn-retry-connection'>
+        <span class='glyphicon glyphicon-refresh'></span> Reintentar
+    </button>
+
     <!-- The view for the logger -->
     <div class="logger"></div>
 
 </script>
 
-<!-- The device list item template -->
-<script type="text/template" id="item-template">
-    <div class='panel panel-default' style='margin-top:16px;'>
-        <div class='panel-body'>
-            <div class='row'>
-                <div class='col-xs-6'><b><%= name %></b></div>
-                <div class='col-xs-6'>
-                    <% if(isConnected) { %>
-                    <button type='button' class='btn btn-danger btn-block btn-bt btn-bt-disconnect'>
-                        <span class='glyphicon glyphicon-remove'></span> Disconnect
-                    </button>
-                    <% } else { %>
-                    <button type='button' class='btn btn-default btn-block btn-bt btn-bt-connect' data-loading-text='Connecting...' disabled>
-                        <span class='glyphicon glyphicon-transfer'></span> Connect
-                    </button>
-                    <% } %>
-                </div>
-            </div>
-            <% if(isConnected) { %>
-            <div class='row'>
-                <div class='col-xs-12'>
-                    <button type='button' class='btn btn-info btn-block btn-bt-login'>
-                        <span class='glyphicon glyphicon-arrow-right'></span> Login
-                    </button>
-                </div>
-            </div>
-            <% } %>
-        </div>
-    </div>
-</script>
-
 <!-- The login page template -->
 <script type="text/template" id="login-template">
     <div class="form-group">
-        <label>User</label>
+        <label>Usuario</label>
         <input type="text" class="form-control username"  value="admin" placeholder="User">
     </div>
     <div class="form-group">
-        <label>Password</label>
+        <label>Contraseña</label>
         <input type="password" class="form-control password"  value="12345" placeholder="Password">
     </div>
+    <label>
+        <input type="checkbox" class="chk-remember-user" checked> Recordar usuario
+    </label>
     <button type="button" class="btn btn-success btn-block btn-login">
-        Login
+        Ingresar
     </button>
 
     <!-- The view for the logger -->
@@ -124,21 +106,20 @@
 
 <!-- The control page template -->
 <script type="text/template" id="control-template">
+    <% if(user.username == 'admin') { %>
     <div class="row">
-        <div class="col-xs-8">
-            <h4>
-                Hello, <%= user.username %>!
-            </h4>
-        </div>
-        <div class="col-xs-4">
-            <button class="btn btn-block btn-success btn-logout">Logout</button>
+        <div class="col-xs-12">
+            <button type="button" class="btn btn-info btn-lg btn-block btn-show-users">
+                <span class="glyphicon glyphicon-user"></span> Usuarios
+            </button>
         </div>
     </div>
+    <% } %>
     <div class="row">
         <div class="col-xs-6">
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    Temperature
+                    Temperatura
                 </div>
                 <div class="panel-body">
                     <div class="panel-text">
@@ -152,7 +133,7 @@
         <div class="col-xs-6">
             <div class="panel panel-info">
                 <div class="panel-heading">
-                    Humidity
+                    Humedad
                 </div>
                 <div class="panel-body">
                     <div class="panel-text">
@@ -167,7 +148,7 @@
         <li class="list-group-item">
             <div class="row">
                 <div class="col-xs-7">
-                    <label>Lock State</label>
+                    <label>Bloqueo de cerradura</label>
                 </div>
                 <div class="col-xs-5">
                     <input type="checkbox" class="chk-lock-opened" checked>
@@ -177,7 +158,7 @@
         <li class="list-group-item">
             <div class="row">
                 <div class="col-xs-7">
-                    <label>Light Activation</label>
+                    <label>Luz automática</label>
                 </div>
                 <div class="col-xs-5">
                     <input type="checkbox" class="chk-light-enabled" checked>
@@ -187,7 +168,7 @@
         <li class="list-group-item">
             <div class="row">
                 <div class="col-xs-7">
-                    <label>Light State</label>
+                    <label>Estado de lámpara</label>
                 </div>
                 <div class="col-xs-5">
                     <img id="light_on" src="img/light_on.png" height="48"class="light-img" style="display: none;"/>
@@ -196,20 +177,6 @@
             </div>
         </li>
     </ul>
-    <div class="row">
-        <div class="col-xs-12">
-            <button type="button" class="btn btn-info btn-lg btn-block btn-refresh-state">
-                <span class="glyphicon glyphicon-refresh"></span> Refresh State
-            </button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <button type="button" class="btn btn-info btn-lg btn-block btn-show-users">
-                <span class="glyphicon glyphicon-user"></span> Users
-            </button>
-        </div>
-    </div>
 
     <!-- The view for the logger -->
     <div class="logger"></div>
@@ -221,7 +188,7 @@
         <div class='panel panel-default'>
             <div class='panel-body'>
                 <div class='row'>
-                    <div class='col-xs-8'><b><%= username %></b></div>
+                    <div class='col-xs-8'><label><%= username %></label></div>
                     <div class='col-xs-4'>
                         <button type='button' class='btn btn-danger btn-block btn-bt btn-remove-user'>
                             <span class='glyphicon glyphicon-remove'></span>
@@ -241,16 +208,16 @@
         <div class="col-xs-12">
             <div class="new-user">
                 <div class="form-group">
-                    <label>User</label>
+                    <label>Usuario</label>
                     <input type="text" class="form-control username"  value="pepe" placeholder="User">
                 </div>
                 <div class="form-group">
-                    <label>Password</label>
+                    <label>Contraseña</label>
                     <input type="password" class="form-control password"  value="4321" placeholder="Password">
                 </div>
             </div>
             <button type='button' class='btn btn-success btn-block btn-lg btn-add-user'>
-                <span class='glyphicon glyphicon-plus'></span> Add user
+                <span class='glyphicon glyphicon-plus'></span> Nuevo usuario
             </button>
         </div>
     </div>
@@ -272,6 +239,7 @@
 
 <!-- Basically our whole app -->
 <script src="js/main.js"></script>
+<script src="js/model/bt-connection.js"></script>
 <script src="js/model/control-model.js"></script>
 <script src="js/view/control-view.js"></script>
 <script src="js/model/communication.js"></script>

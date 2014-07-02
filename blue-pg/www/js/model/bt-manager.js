@@ -1,4 +1,5 @@
 var BTDeviceName = 'H-C-2010-06-01';
+var BTHWAddress = '00:11:12:11:04:39';
 
 App.Model.BluetoothState = Backbone.Model.extend({}, {
     Off:       1,
@@ -24,10 +25,45 @@ App.Model.BTManager = Backbone.Model.extend({
         window.bluetooth.isEnabled(function(isEnabled) {
             if(!isEnabled)
                 self.enable();
-            BluetoothState.set({
-                state: App.Model.BluetoothState.Ready
-            });
         });
+    },
+
+    // TODO: REMOVE!
+    tryConnection: function(){
+        var onConnected = function(connected){
+            if(connected){
+                ConnectionState.set({
+                    connected: true
+                });
+                BTManager.startConnectionManager();
+            }else{
+                var onDeviceDiscovered = function(device){
+                    if(device.name == BTDeviceName){
+                        ConnectionState.set({
+                            deviceDetected: true
+                        });
+                        console.log(device.address);
+                        window.bluetooth.stopDiscovery(
+                            window.bluetooth.getUuids(function (device) {
+                                console.log("Got Uuids!");
+                                BTManager.connect(function () {
+                                    console.log("Connected!");
+                                }, device);
+                            }, onBTError, device.address)
+                            , onBTError);
+                    }
+                };
+                var onDiscoveryFinish = function () {
+                    if (!ConnectionState.get('deviceDetected')) {
+                        console.log('Device not detected!');
+                    }
+                };
+
+                console.log('Discovering device...');
+                BTManager.discover(onDeviceDiscovered, onDiscoveryFinish);
+            }
+        };
+        window.bluetooth.isConnected(onConnected, onBTError);
     },
 
     enable: function(){

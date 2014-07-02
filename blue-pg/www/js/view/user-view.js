@@ -5,6 +5,13 @@ App.View.UserView = Backbone.View.extend({
         'click .btn-login':    'login'
     },
 
+    savedLogin: function(username, password){
+        $('.username').val(username);
+        $('.password').val(password);
+
+        this.login();
+    },
+
     login: function(){
         this.model = new App.Model.User();
         this.model.set({
@@ -12,6 +19,11 @@ App.View.UserView = Backbone.View.extend({
             password: $('.password').val()
         });
 
+        if($('#chk-remember-user').prop('checked')){
+            window.localStorage.setItem('username', this.model.get('username'));
+            window.localStorage.setItem('password', this.model.get('password'));
+        }
+        
         Communication.login(this.model);
     },
 

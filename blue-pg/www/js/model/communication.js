@@ -81,10 +81,15 @@ App.Model.Communication = Backbone.Model.extend({
                     Logger.log("Read: " + message);
 
                 // Call parsing function
-                setTimeout(parsingFunction(parameters), 10);
+                setTimeout(function() {
+                    parsingFunction(parameters)
+                }, 10);
 
                 if(Communication.sentMessageQueue.length > 0){
-                    setTimeout(BTManager.send(Communication.sentMessageQueue[0]), 10);
+                    setTimeout(function(){
+                            BTManager.send(Communication.sentMessageQueue[0])
+                        }, 10
+                    );
                 }
             }
 
@@ -98,7 +103,8 @@ App.Model.Communication = Backbone.Model.extend({
             this.parsingFunctionsQueue.push(parsingFunction);
             this.sentMessageQueue.push(data);
 
-            $('#send_queue_lenght').html(this.sentMessageQueue.length);
+            if(DebugMode)
+                $('#send_queue_lenght').html(this.sentMessageQueue.length);
 
             // If the only function in queue is the recently added, send data
             if (this.parsingFunctionsQueue.length == 1) {
@@ -108,6 +114,12 @@ App.Model.Communication = Backbone.Model.extend({
         }else{
             Logger.log("Error sending data. Connection isn't managed.")
         }
+    },
+
+    clearQueues: function(){
+        this.parsingFunctionsQueue.length = 0;
+        this.sentMessageQueue.length = 0;
+        Logger.log("Send and Recieve queues emptied.");
     },
 
     /*
@@ -163,10 +175,10 @@ App.Model.Communication = Backbone.Model.extend({
         Communication.send(message, parsingFunction);
     },
 
-    logout: function(user){
+    logout: function(username){
         var message = this.buildMessage(
             RequestCode.LOGOUT,
-            user.get('username')
+            username
         );
 
         var parsingFunction = function(parameters){

@@ -86,7 +86,12 @@ App.View.ConnectionView = Backbone.View.extend({
     events: {
         'click .btn-bt-on':         'enableBT',
         'click .btn-bt-off':        'disableBT',
-        'click .btn-bt-discover':   'discoverBT'
+        'click .btn-bt-discover':   'discoverBT',
+        'click .btn-retry-connection': 'retryConnection'
+    },
+
+    retryConnection: function(){
+        BTManager.tryConnection();
     },
 
     enableBT: function(){
@@ -116,42 +121,6 @@ App.View.ConnectionView = Backbone.View.extend({
         DeviceCollection.reset();
 
         BTManager.discover(onDeviceDiscovered, onDiscoveryFinished, onBTError);
-    },
-
-    init: function(){
-        var onConnected = function(connected){
-            if(connected){
-                ConnectionState.set({
-                    connected: true
-                });
-                BTManager.startConnectionManager();
-            }else{
-                var onDeviceDiscovered = function(device){
-                    if(device.name == BTDeviceName){
-                        ConnectionState.set({
-                            deviceDetected: true
-                        });
-                        window.bluetooth.stopDiscovery(
-                            window.bluetooth.getUuids(function (device) {
-                                console.log("Got Uuids!");
-                                BTManager.connect(function () {
-                                    console.log("Connected!");
-                                }, device);
-                            }, onBTError, device.address)
-                        , onBTError);
-                    }
-                };
-                var onDiscoveryFinish = function () {
-                    if (!ConnectionState.get('deviceDetected')) {
-                        console.log('Device not detected!');
-                    }
-                };
-
-                console.log('Discovering device...');
-                BTManager.discover(onDeviceDiscovered, onDiscoveryFinish);
-            }
-        };
-        window.bluetooth.isConnected(onConnected, onBTError);
     },
 
     refreshBTState: function(){

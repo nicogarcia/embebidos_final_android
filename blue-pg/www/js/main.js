@@ -9,6 +9,8 @@ $.fn.extend({
 	}
 });
 
+var DebugMode = false;
+
 var App = {
     Controller: {},
     Collection: {},
@@ -29,6 +31,8 @@ var ControlState, ControlView;
 var UserViewCollection;
 var UserListView;
 var Router;
+
+var BTConnection;
 
 $(function() {
         ConnectionState = new App.Model.ConnectionState();
@@ -58,6 +62,8 @@ $(function() {
 
         Router = new App.Router();
 
+        Router.navigate('', true);
+
         // TODO: Debug. pushState should be true for native app
         Backbone.history.start({pushState: false});
     }
@@ -70,11 +76,15 @@ var onDeviceReady = function() {
     BluetoothState = new App.Model.BluetoothState({
         state: App.Model.BluetoothState.Busy
     });
+
     // Bind BluetoothState
     BluetoothState.on('change', ConnectionView.refreshBTState);
     BTManager = new App.Model.BTManager();
 
-    ConnectionView.init();
+    BTConnection = new App.Model.BTConnection();
+
+    BTConnection.trigger('bt-initial');
+    //BTManager.tryConnection();
 };
 
 $(document).on('deviceready', onDeviceReady);

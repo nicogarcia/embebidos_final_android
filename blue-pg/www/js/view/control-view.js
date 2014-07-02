@@ -3,8 +3,6 @@ App.View.ControlView = Backbone.View.extend({
 
     events: {
         'click .btn-show-users'         : 'showUsers',
-        //'click .btn-refresh-state'      : 'refreshState',
-        'click .btn-logout'             : 'logout',
         'switchChange.bootstrapSwitch .chk-lock-opened' : 'toggleLock',
         'switchChange.bootstrapSwitch .chk-light-enabled' : 'toggleLight'
     },
@@ -55,25 +53,16 @@ App.View.ControlView = Backbone.View.extend({
         };
     },
 
-    refreshState: function(){
-        Communication.requestState(this.model.get('user').get('username'));
-    },
-
     afterRender: function(){
         $(".chk-lock-opened").bootstrapSwitch('state', this.model.get('lock_opened'), true);
 
         $(".chk-light-enabled").bootstrapSwitch('state', this.model.get('light_enabled'), true);
+
+        Router.addLoggedHeader(this.model.get('user').get('username'));
     },
 
     showUsers: function(){
         Communication.requestUsers(this.model.get('user').get('username'));
-    },
-
-    logout: function(){
-        Communication.logout(this.model.get('user'));
-        ConnectionState.set({
-            loggedIn: false
-        });
     },
 
     toggleLock: function(event, state) {
