@@ -8,6 +8,8 @@
 
     <!-- Bootstrap styles -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet" media="screen" />
+    <link href="css/bootstrap3/bootstrap-switch.min.css" rel="stylesheet" media="screen" />
+    <link href="css/sisad.css" rel="stylesheet" media="screen" />
 
     <title>SISAD</title>
 </head>
@@ -16,13 +18,27 @@
 <!-- Every application needs a topbar, right? -->
 <nav class="navbar navbar-default" role="navigation">
     <div class="navbar-header">
-        <a href="#" class="navbar-brand">SISAD</a>
+        <a href="#/" class="navbar-brand">SISAD</a>
+        <div class="navbar-brand"> - </div>
+        <span id="username-label"></span>
+        <span id="send_queue_lenght"></span>
+        <button type="button" class="btn btn-default navbar-btn navbar-right btn-logout"
+                style="display: none;">
+            Logout
+        </button>
     </div>
 </nav>
 
 <!-- Actual content of the application hosted here -->
 <div class="container">
     <div id="page-container"></div>
+    <!-- <div class="box">
+        <img class="android" src="img/android-icon.png" height='100'/>
+        <div class="con"></div>
+        <div class="byte"></div>
+        <img class="arduino" src="img/arduino-icon.png" height='100'/>
+    </div>
+    -->
 </div>
 
 <!-- The logger template -->
@@ -30,54 +46,17 @@
     <p><%= data %></p>
 </script>
 
-<!-- The device list item template -->
-<script type="text/template" id="item-template">
-    <div class='panel panel-default' style='margin-top:16px;'>
-        <div class='panel-body'>
-            <div class='row'>
-                <div class='col-xs-8'><b><%= name %></b></div>
-                <div class='col-xs-4'>
-                    <% if(isConnected) { %>
-                    <button type='button' class='btn btn-danger btn-block btn-bt btn-bt-disconnect'>
-                        <span class='glyphicon glyphicon-remove'></span> Disconnect
-                    </button>
-                    <% } else { %>
-                    <button type='button' class='btn btn-default btn-block btn-bt btn-bt-connect' data-loading-text='Connecting...' disabled>
-                        <span class='glyphicon glyphicon-transfer'></span> Connect
-                    </button>
-                    <% } %>
-                </div>
-            </div>
-            <% if(isConnected) { %>
-            <div class='row'>
-                <div class='col-xs-8'>
-                    <input class="send-text" />
-                </div>
-                <div class='col-xs-4'>
-                    <button type='button' class='btn btn-info btn-block btn-bt-send'>
-                        <span class='glyphicon glyphicon-check'></span> Send
-                    </button>
-                </div>
-            </div>
-            <button type='button' class='btn btn-info btn-block btn-bt-login'>
-                <span class='glyphicon glyphicon-arrow-right'></span> Login
-            </button>
-            <% } %>
-        </div>
-    </div>
-</script>
-
 <!-- The connection page template -->
 <script type="text/template" id="connection-template">
     <!-- On and Off buttons -->
     <div class="row">
         <div class="col-xs-6">
-            <button id="btn-bt-on" type="button" class="btn btn-success btn-lg btn-block btn-bt" disabled>
+            <button id="btn-bt-on" type="button" class="btn btn-success btn-lg btn-block btn-bt-on" disabled>
                 On
             </button>
         </div>
         <div class="col-xs-6">
-            <button id="btn-bt-off" type="button" class="btn btn-danger btn-lg btn-block btn-bt" disabled>
+            <button id="btn-bt-off" type="button" class="btn btn-danger btn-lg btn-block btn-bt-off" disabled>
                 Off
             </button>
         </div>
@@ -86,7 +65,7 @@
     <!-- Discovery button -->
     <div class="row" style="margin-top:16px;">
         <div class="col-md-12">
-            <button id="btn-bt-discover" type="button" class="btn btn-info btn-lg btn-block btn-bt" data-loading-text="Discovering..." disabled>
+            <button id="btn-bt-discover" type="button" class="btn btn-info btn-lg btn-block btn-bt-discover" data-loading-text="Discovering..." disabled>
                 <span class="glyphicon glyphicon-eye-open"></span> Start Discovery
             </button>
         </div>
@@ -94,6 +73,10 @@
 
     <!-- The found devices appear inside this div -->
     <div id="list-devices"></div>
+
+    <button type='button' class='btn btn-success btn-block btn-lg btn-retry-connection'>
+        <span class='glyphicon glyphicon-refresh'></span> Reintentar
+    </button>
 
     <!-- The view for the logger -->
     <div class="logger"></div>
@@ -103,15 +86,18 @@
 <!-- The login page template -->
 <script type="text/template" id="login-template">
     <div class="form-group">
-        <label>User</label>
-        <input type="password" class="form-control username"  value="test_user" placeholder="User">
+        <label>Usuario</label>
+        <input type="text" class="form-control username"  value="admin" placeholder="User">
     </div>
     <div class="form-group">
-        <label>Password</label>
-        <input type="password" class="form-control password"  value="test_pass" placeholder="Password">
+        <label>Contraseña</label>
+        <input type="password" class="form-control password"  value="12345" placeholder="Password">
     </div>
+    <label>
+        <input type="checkbox" class="chk-remember-user" checked> Recordar usuario
+    </label>
     <button type="button" class="btn btn-success btn-block btn-login">
-        Login
+        Ingresar
     </button>
 
     <!-- The view for the logger -->
@@ -120,18 +106,130 @@
 
 <!-- The control page template -->
 <script type="text/template" id="control-template">
-
-    <h2>User: <%= user.username %></h2>
-    <h3>Connected: <%= user.connected %></h3>
-    <h3>Temperature: <%= temperature %></h3>
+    <% if(user.username == 'admin') { %>
+    <div class="row">
+        <div class="col-xs-12">
+            <button type="button" class="btn btn-info btn-lg btn-block btn-show-users">
+                <span class="glyphicon glyphicon-user"></span> Usuarios
+            </button>
+        </div>
+    </div>
+    <% } %>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    Temperatura
+                </div>
+                <div class="panel-body">
+                    <div class="panel-text">
+                        <span id="temperature_text"><%= temperature %></span>°
+                        <img id="temp_high" src="img/temperature-high-icon.png" height="48" style="display: none;"/>
+                        <img id="temp_low" src="img/temperature-low-icon.png" height="48" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Humedad
+                </div>
+                <div class="panel-body">
+                    <div class="panel-text">
+                        <span id="humidity_text"><%= humidity %></span>%
+                        <img src="img/humidity-icon.png" height="48" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-xs-7">
+                    <label>Bloqueo de cerradura</label>
+                </div>
+                <div class="col-xs-5">
+                    <input type="checkbox" class="chk-lock-opened" checked>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-xs-7">
+                    <label>Luz automática</label>
+                </div>
+                <div class="col-xs-5">
+                    <input type="checkbox" class="chk-light-enabled" checked>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-xs-7">
+                    <label>Estado de lámpara</label>
+                </div>
+                <div class="col-xs-5">
+                    <img id="light_on" src="img/light_on.png" height="48"class="light-img" style="display: none;"/>
+                    <img id="light_off" src="img/light_off.png" height="48" class="light-img"/>
+                </div>
+            </div>
+        </li>
+    </ul>
 
     <!-- The view for the logger -->
     <div class="logger"></div>
 </script>
 
+<!-- The user list item template -->
+<script type="text/template" id="user-item-template">
+    <div class="col-xs-12">
+        <div class='panel panel-default'>
+            <div class='panel-body'>
+                <div class='row'>
+                    <div class='col-xs-8'><label><%= username %></label></div>
+                    <div class='col-xs-4'>
+                        <button type='button' class='btn btn-danger btn-block btn-bt btn-remove-user'>
+                            <span class='glyphicon glyphicon-remove'></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- The user list template -->
+<script type="text/template" id="user-list-template">
+    <div class="row user-item-container"></div>
+
+    <div class='row'>
+        <div class="col-xs-12">
+            <div class="new-user">
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" class="form-control username"  value="pepe" placeholder="User">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" class="form-control password"  value="4321" placeholder="Password">
+                </div>
+            </div>
+            <button type='button' class='btn btn-success btn-block btn-lg btn-add-user'>
+                <span class='glyphicon glyphicon-plus'></span> Nuevo usuario
+            </button>
+        </div>
+    </div>
+    <!-- The view for the logger -->
+    <div class="logger"></div>
+</script>
+
+
 <!-- Our precious libraries -->
 <script src="bower_components/jquery/dist/jquery.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="js/bootstrap-switch.min.js"></script>
 <script src="bower_components/underscore/underscore.js"></script>
 <script src="bower_components/backbone/backbone.js"></script>
 <script src="bower_components/layoutmanager/backbone.layoutmanager.js"></script>
@@ -141,6 +239,7 @@
 
 <!-- Basically our whole app -->
 <script src="js/main.js"></script>
+<script src="js/model/bt-connection.js"></script>
 <script src="js/model/control-model.js"></script>
 <script src="js/view/control-view.js"></script>
 <script src="js/model/communication.js"></script>
@@ -150,6 +249,10 @@
 <script src="js/view/connection-view.js"></script>
 <script src="js/model/logger-model.js"></script>
 <script src="js/view/logger-view.js"></script>
+<script src="js/view/list-user-view.js"></script>
+<script src="js/controller/router.js"></script>
+<script src="js/model/error-manager.js"></script>
+<script src="js/model/connection-state.js"></script>
 
 </body>
 </html>

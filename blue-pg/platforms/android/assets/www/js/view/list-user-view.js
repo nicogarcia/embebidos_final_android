@@ -43,10 +43,6 @@ App.View.UserListView = Backbone.View.extend({
         this.setView('.logger', LoggerView);
     },
 
-    afterRender: function(){
-        Router.addBackHeader();
-    },
-
     addUser: function(){
         Communication.addUser(
             ControlState.get('user').get('username'),

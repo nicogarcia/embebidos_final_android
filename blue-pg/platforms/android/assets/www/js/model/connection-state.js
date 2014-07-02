@@ -39,11 +39,10 @@ App.Model.ConnectionState = Backbone.Model.extend({
         } else {
             ConnectionState.set({
                 deviceDetected: false,
-                connectionManaged: false
-            }, {silent: true});
-            ConnectionState.set({
+                connectionManaged: false,
                 loggedIn: false
-            });
+            }, {silent: true});
+            Router.navigate('connection', true, true);
             Logger.log("Device disconnected.");
         }
     },
@@ -81,10 +80,7 @@ App.Model.ConnectionState = Backbone.Model.extend({
             clearInterval(this.get('ttlCallerId'));
             clearInterval(this.get('stateCallerId'));
 
-            if(this.get('connected'))
-                Router.navigate('connection', true);
-            else
-                Router.navigate('login', true);
+            Router.navigate('login', true);
         }
     }
 });

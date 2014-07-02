@@ -33,6 +33,7 @@ var UserListView;
 var Router;
 
 var BTConnection;
+var GlobalUser;
 
 $(function() {
         ConnectionState = new App.Model.ConnectionState();
@@ -44,7 +45,8 @@ $(function() {
         LoggerView = new App.View.LoggerView({model: Logger});
 
         // Create user view
-        UserView = new App.View.UserView();
+        GlobalUser = new App.Model.User();
+        UserView = new App.View.UserView({model: GlobalUser});
 
         // Create Device Collection and its view
         DeviceCollection = new App.Collection.DeviceCollection();
@@ -71,6 +73,8 @@ $(function() {
 
 var onDeviceReady = function() {
     console.log("Device Ready!");
+
+    document.addEventListener("backbutton", function(){}, false);
 
     // Create state and BTManager
     BluetoothState = new App.Model.BluetoothState({

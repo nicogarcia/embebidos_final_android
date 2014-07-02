@@ -1,0 +1,251 @@
+.navbar {
+    margin-bottom: 5px;
+}
+.panel-body, .panel-heading {
+    text-align: center;
+}
+
+.panel-text {
+    font-size: xx-large;
+}
+
+.row {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+label{
+    font-size: 18px;
+}
+
+.navbar-btn {
+    margin-right: 15px;
+    float: right;
+}
+
+.light-img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    background: white;
+}
+
+.box{
+    width: 200px;
+    height: 150px;
+    position: absolute;
+    top: calc(50% - 55px);
+    top: -webkit-calc(50% - 55px);
+    left: calc(50% - 100px);
+    left: -webkit-calc(50% - 100px);
+}
+
+.android {
+    position:absolute;
+    top: calc(50% - 50px);
+    top: -webkit-calc(50% - 50px);
+    left: calc(50% - 125px);
+    left: -webkit-calc(-25%);
+}
+
+.arduino {
+    position:absolute;
+    top: calc(50% - 105px);
+    top: -webkit-calc(50% - 50px);
+    left: calc(50% + 75px);
+    left: -webkit-calc(75%);
+}
+
+.con{
+    position: absolute;
+    top: calc(50%);
+    top: -webkit-calc(50%);
+    left: calc(50% - 75px);
+    left: -webkit-calc(25%);
+    width: 150px;
+    height: 3px;
+    background: cadetblue;
+}
+
+.byte{
+    position: absolute;
+    top: calc(50% - 3px);
+    top: -webkit-calc(50% - 3px);
+    left: calc(50% - 100px);
+    left: -webkit-calc(50% - 100px);
+    height: 9px;
+    width: 9px;
+    background: cadetblue;
+    border-radius: 360px;
+    z-index: 6;
+    opacity: 0;
+    -webkit-animation: byte_animate 5s infinite linear 0.5s;
+    -moz-animation: byte_animate 5s infinite linear 0.5s;
+    -o-animation: byte_animate 5s infinite linear 0.5s;
+    animation: byte_animate 5s infinite linear 0.5s;
+}
+
+
+/*Byte Animation*/
+@-webkit-keyframes byte_animate{
+    0%{
+        opacity: 0;
+        left: 80px;
+    }
+    4%{
+        opacity: 1;
+    }
+    46%{
+        opacity: 1;
+    }
+    50%{
+        opacity: 0;
+        left: 185px;
+    }
+    54%{
+        opacity: 1;
+    }
+    96%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+        left: 80px;
+    }
+}
+
+@-moz-keyframes byte_animate{
+    0%{
+        opacity: 0;
+        left: 80px;
+    }
+    4%{
+        opacity: 1;
+    }
+    46%{
+        opacity: 1;
+    }
+    50%{
+        opacity: 0;
+        left: 185px;
+    }
+    54%{
+        opacity: 1;
+    }
+    96%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+        left: 80px;
+    }
+}
+
+@-o-keyframes byte_animate{
+    0%{
+        opacity: 0;
+        left: 80px;
+    }
+    4%{
+        opacity: 1;
+    }
+    46%{
+        opacity: 1;
+    }
+    50%{
+        opacity: 0;
+        left: 185px;
+    }
+    54%{
+        opacity: 1;
+    }
+    96%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+        left: 80px;
+    }
+}
+
+@keyframes byte_animate{
+    0%{
+        opacity: 0;
+        left: 80px;
+    }
+    4%{
+        opacity: 1;
+    }
+    46%{
+        opacity: 1;
+    }
+    50%{
+        opacity: 0;
+        left: 185px;
+    }
+    54%{
+        opacity: 1;
+    }
+    96%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+        left: 80px;
+    }
+}
+
+
+/*FADE IN-OUT*/
+@-webkit-keyframes fade-in-out{
+    0%{
+        opacity: 1;
+    }
+    50%{
+        opacity: 0;
+    }
+    100%{
+        oapcity: 1;
+    }
+}
+
+@-moz-keyframes fade-in-out{
+    0%{
+        opacity: 1;
+    }
+    50%{
+        opacity: 0;
+    }
+    100%{
+        oapcity: 1;
+    }
+}
+
+@-o-keyframes fade-in-out{
+    0%{
+        opacity: 1;
+    }
+    50%{
+        opacity: 0;
+    }
+    100%{
+        oapcity: 1;
+    }
+}
+
+@keyframes fade-in-out{
+    0%{
+        opacity: 1;
+    }
+    50%{
+        opacity: 0;
+    }
+    100%{
+        oapcity: 1;
+    }
+}
