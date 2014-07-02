@@ -34,7 +34,7 @@ App.Router = Backbone.Router.extend({
             $('#page-container').empty().append(ControlView.$el);
             ControlView.render();
         } else {
-            Router.navigate('');
+            Router.navigate('', true, true);
         }
     },
 

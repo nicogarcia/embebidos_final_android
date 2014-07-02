@@ -82,9 +82,9 @@ App.Model.ConnectionState = Backbone.Model.extend({
             clearInterval(this.get('stateCallerId'));
 
             if(this.get('connected'))
-                Router.navigate('login', true);
+                Router.navigate('login', true, true);
             else
-                Router.navigate('', true);
+                Router.navigate('', true, true);
         }
     }
 });

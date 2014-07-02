@@ -21,9 +21,10 @@ App.Model.BTConnection = Backbone.Model.extend({
     text: '',
     
     log: function(data){
-        this.text += data;
-        $('#well-logger').html(this.text + '<br>');
+        this.text += data + '<br>';
+        $('#well-logger').html(this.text);
 
+        data.replace('<br>', '');
         console.log(data);
     },
 
