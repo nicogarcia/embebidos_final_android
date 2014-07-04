@@ -20,7 +20,9 @@
 package com.embebidos.BluePg;
 
 import android.os.Bundle;
+
 import org.apache.cordova.*;
+import org.apache.cordova.bluetooth.BluetoothPlugin;
 
 public class BluePg extends CordovaActivity 
 {
@@ -32,6 +34,16 @@ public class BluePg extends CordovaActivity
         // Set by <content src="index.html" /> in config.xml
         super.loadUrl(Config.getStartUrl());
         //super.loadUrl("file:///android_asset/www/index.html");
+    }
+    
+    @Override
+    public void onStop(){
+    	super.onStop();
+    	
+    	try {
+			BluetoothPlugin._bluetooth.disconnect();
+		} catch (Exception e) {
+		}
     }
 }
 

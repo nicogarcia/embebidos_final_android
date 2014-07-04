@@ -1,4 +1,4 @@
-var STATE_REQUEST_INTERVAL = 1000;
+var STATE_REQUEST_INTERVAL = 500;
 var TTL_REFRESH_INTERVAL = 30000;
 
 App.Model.ConnectionState = Backbone.Model.extend({
@@ -82,9 +82,9 @@ App.Model.ConnectionState = Backbone.Model.extend({
             clearInterval(this.get('stateCallerId'));
 
             if(this.get('connected'))
-                Router.navigate('connection', true);
+                Router.navigate('login', true, true);
             else
-                Router.navigate('login', true);
+                Router.navigate('', true, true);
         }
     }
 });

@@ -13,6 +13,7 @@ App.Router = Backbone.Router.extend({
     },
 
     connection: function(){
+
         // Append connection to the container and render
         //ConnectionView.setView("#list-devices", DeviceListView);
         ConnectionView.setView(".logger", LoggerView);
@@ -33,7 +34,7 @@ App.Router = Backbone.Router.extend({
             $('#page-container').empty().append(ControlView.$el);
             ControlView.render();
         } else {
-            Router.navigate('');
+            Router.navigate('', true, true);
         }
     },
 

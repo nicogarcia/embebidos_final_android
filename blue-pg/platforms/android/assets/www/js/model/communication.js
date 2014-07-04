@@ -187,7 +187,7 @@ App.Model.Communication = Backbone.Model.extend({
                 parameters[1] == MessageParameters.UNAUTHORIZED){
                 UserView.model = new App.Model.User();
 
-                Router.navigate('login', true);
+                Router.navigate('login', true, true);
             }
         };
 
@@ -247,7 +247,7 @@ App.Model.Communication = Backbone.Model.extend({
 
     requestUsers: function(username){
         if(username == undefined)
-            Router.navigate('', true);
+            Router.navigate('', true, true);
 
         var message = this.buildMessage(
             RequestCode.REQUEST_USERS,
@@ -265,7 +265,7 @@ App.Model.Communication = Backbone.Model.extend({
                     );
                 });
                 UserListView.render();
-                Router.navigate('users', true);
+                Router.navigate('users', true, true);
             }
         };
 

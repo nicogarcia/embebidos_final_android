@@ -60,7 +60,7 @@ public class BluetoothPlugin extends CordovaPlugin
 	/**
 	 * Bluetooth interface
 	 */
-	private BluetoothWrapper _bluetooth;
+	public static BluetoothWrapper _bluetooth;
 	
 	/**
 	 * Callback context for device discovery actions.

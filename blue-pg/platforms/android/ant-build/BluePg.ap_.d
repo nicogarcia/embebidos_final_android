@@ -38,6 +38,7 @@ c:\nico\embebidos_workspace\embebidos_final_android\blue-pg\platforms\android\as
 c:\nico\embebidos_workspace\embebidos_final_android\blue-pg\platforms\android\assets\www\img \
 c:\nico\embebidos_workspace\embebidos_final_android\blue-pg\platforms\android\assets\www\index.html \
 c:\nico\embebidos_workspace\embebidos_final_android\blue-pg\platforms\android\assets\www\js \
+c:\nico\embebidos_workspace\embebidos_final_android\blue-pg\platforms\android\assets\www\phonegap.js \
 c:\nico\embebidos_workspace\embebidos_final_android\blue-pg\platforms\android\assets\www\plugins \
 c:\nico\embebidos_workspace\embebidos_final_android\blue-pg\platforms\android\assets\www\bower_components\backbone \
 c:\nico\embebidos_workspace\embebidos_final_android\blue-pg\platforms\android\assets\www\bower_components\bootstrap \
