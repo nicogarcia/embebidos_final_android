@@ -73,6 +73,14 @@ $(function() {
 
 var onDeviceReady = function() {
     console.log("Device Ready!");
+    
+    document.addEventListener("resume", onResume, false);
+
+    function onResume() {
+        if(BTConnection != undefined){
+        	BTConnection.trigger('bt-initial');
+        }
+    }
 
     //document.addEventListener("backbutton", function(){}, false);
 

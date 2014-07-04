@@ -1,4 +1,4 @@
-var STATE_REQUEST_INTERVAL = 1000;
+var STATE_REQUEST_INTERVAL = 500;
 var TTL_REFRESH_INTERVAL = 30000;
 
 App.Model.ConnectionState = Backbone.Model.extend({
